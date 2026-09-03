@@ -1,0 +1,43 @@
+# Java
+target/
+*.class
+
+# Spring
+*.log
+
+# Node
+node_modules/
+.next/
+out/
+dist/
+
+# Environment variables
+.env
+.env.*
+!.env.example
+
+# IDE
+.idea/
+.vscode/
+*.iml
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Terraform
+.terraform/
+*.tfstate
+*.tfstate.*
+*.tfvars
+
+# Docker
+*.pid
+
+# Test / coverage
+coverage/
+.pytest_cache/
+
+# Secrets
+*.pem
+*.key
