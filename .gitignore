@@ -20,6 +20,7 @@ dist/
 .idea/
 .vscode/
 *.iml
+target/
 
 # OS
 .DS_Store

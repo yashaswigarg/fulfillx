@@ -1,0 +1,19 @@
+services:
+
+  postgres:
+    image: postgres:18
+    container_name: fulfillx-postgres
+
+    environment:
+      POSTGRES_DB: fulfillx
+      POSTGRES_USER: fulfillx
+      POSTGRES_PASSWORD: fulfillx_dev_password
+
+    ports:
+      - "5433:5432"
+
+    volumes:
+      - postgres_data:/var/lib/postgresql
+
+volumes:
+  postgres_data:
