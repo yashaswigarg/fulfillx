@@ -44,6 +44,11 @@ public class Product {
     @Column(name = "updated_at", nullable = false)
     private OffsetDateTime updatedAt;
 
+    @PreUpdate
+    protected void onUpdate() {
+        updatedAt = OffsetDateTime.now();
+    }
+
     protected Product() {
     }
 
