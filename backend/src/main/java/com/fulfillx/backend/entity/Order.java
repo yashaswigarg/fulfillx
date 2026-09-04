@@ -8,11 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table(name = "orders", indexes = {
-        @Index(name = "idx_orders_user_id", columnList = "user_id"),
-        @Index(name = "idx_orders_status", columnList = "status"),
-        @Index(name = "idx_orders_created_at", columnList = "created_at")
-})
+@Table(name = "orders")
 public class Order {
 
     @Id
@@ -24,10 +20,10 @@ public class Order {
     private User user;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @Column(nullable = false, length = 50)
     private OrderStatus status;
 
-    @Column(name = "total_amount", nullable = false)
+    @Column(name = "total_amount", nullable = false, precision = 12, scale = 2)
     private BigDecimal totalAmount;
 
     @Column(name = "created_at", nullable = false)
@@ -42,18 +38,37 @@ public class Order {
     protected Order() {
     }
 
-    public Order(
-            User user,
-            BigDecimal totalAmount) {
+    public Order(User user) {
         this.user = user;
         this.status = OrderStatus.CREATED;
-        this.totalAmount = totalAmount;
+        this.totalAmount = BigDecimal.ZERO;
         this.createdAt = OffsetDateTime.now();
         this.updatedAt = OffsetDateTime.now();
     }
 
     public void addItem(OrderItem item) {
         items.add(item);
+    }
+
+    @PrePersist
+    protected void onCreate() {
+        OffsetDateTime now = OffsetDateTime.now();
+
+        if (createdAt == null) {
+            createdAt = now;
+        }
+
+        if (updatedAt == null) {
+            updatedAt = now;
+        }
+
+        if (status == null) {
+            status = OrderStatus.CREATED;
+        }
+
+        if (totalAmount == null) {
+            totalAmount = BigDecimal.ZERO;
+        }
     }
 
     @PreUpdate
@@ -87,5 +102,13 @@ public class Order {
 
     public List<OrderItem> getItems() {
         return items;
+    }
+
+    public void setTotalAmount(BigDecimal totalAmount) {
+        this.totalAmount = totalAmount;
+    }
+
+    public void setStatus(OrderStatus status) {
+        this.status = status;
     }
 }

@@ -109,4 +109,8 @@ public class Product {
     public OffsetDateTime getUpdatedAt() {
         return updatedAt;
     }
+
+    public void setStockQuantity(Integer stockQuantity) {
+        this.stockQuantity = stockQuantity;
+    }
 }
