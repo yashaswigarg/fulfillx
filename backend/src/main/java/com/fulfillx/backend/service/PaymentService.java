@@ -15,11 +15,11 @@ import org.springframework.context.ApplicationEventPublisher;
 public class PaymentService {
 
     private final PaymentRepository paymentRepository;
-    private final ApplicationEventPublisher eventPublisher;
+    private final OutboxService outboxService;
 
-    public PaymentService(PaymentRepository paymentRepository, ApplicationEventPublisher eventPublisher) {
+    public PaymentService(PaymentRepository paymentRepository, OutboxService outboxService) {
         this.paymentRepository = paymentRepository;
-        this.eventPublisher = eventPublisher;
+        this.outboxService = outboxService;
     }
 
     @Transactional
@@ -46,7 +46,10 @@ public class PaymentService {
 
             Payment savedPayment = paymentRepository.save(payment);
 
-            eventPublisher.publishEvent(
+            outboxService.saveEvent(
+                    "ORDER",
+                    order.getId(),
+                    "OrderPaid",
                     new OrderPaidEvent(
                             order.getId(),
                             order.getUser().getId(),
