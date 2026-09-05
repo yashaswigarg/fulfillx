@@ -1,5 +1,6 @@
 package com.fulfillx.backend.service;
 
+import com.fulfillx.backend.config.FulfillXMetrics;
 import com.fulfillx.backend.entity.Order;
 import com.fulfillx.backend.entity.Payment;
 import com.fulfillx.backend.event.OrderPaidEvent;
@@ -14,12 +15,15 @@ public class PaymentService {
 
     private final PaymentRepository paymentRepository;
     private final OutboxService outboxService;
+    private final FulfillXMetrics metrics;
 
     public PaymentService(
             PaymentRepository paymentRepository,
-            OutboxService outboxService) {
+            OutboxService outboxService,
+            FulfillXMetrics metrics) {
         this.paymentRepository = paymentRepository;
         this.outboxService = outboxService;
+        this.metrics = metrics;
     }
 
     @Transactional
@@ -48,6 +52,7 @@ public class PaymentService {
 
         if (paymentSuccessful) {
 
+            metrics.paymentSuccess();
             payment.markSuccess(
                     "TXN-" + UUID.randomUUID());
 
@@ -71,6 +76,7 @@ public class PaymentService {
             return savedPayment;
         }
 
+        metrics.paymentFailure();
         payment.markFailed();
 
         return paymentRepository.save(payment);

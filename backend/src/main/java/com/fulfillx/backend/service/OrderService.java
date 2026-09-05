@@ -1,5 +1,6 @@
 package com.fulfillx.backend.service;
 
+import com.fulfillx.backend.config.FulfillXMetrics;
 import com.fulfillx.backend.dto.OrderItemResponse;
 import com.fulfillx.backend.dto.OrderResponse;
 import com.fulfillx.backend.entity.Cart;
@@ -31,6 +32,7 @@ public class OrderService {
         private final InventoryService inventoryService;
         private final IdempotencyKeyRepository idempotencyKeyRepository;
         private final PaymentService paymentService;
+        private final FulfillXMetrics metrics;
 
         public OrderService(
                         OrderRepository orderRepository,
@@ -39,7 +41,8 @@ public class OrderService {
                         CartItemRepository cartItemRepository,
                         InventoryService inventoryService,
                         IdempotencyKeyRepository idempotencyKeyRepository,
-                        PaymentService paymentService) {
+                        PaymentService paymentService,
+                        FulfillXMetrics metrics) {
                 this.orderRepository = orderRepository;
                 this.userRepository = userRepository;
                 this.cartRepository = cartRepository;
@@ -47,12 +50,14 @@ public class OrderService {
                 this.inventoryService = inventoryService;
                 this.idempotencyKeyRepository = idempotencyKeyRepository;
                 this.paymentService = paymentService;
+                this.metrics = metrics;
         }
 
         @Transactional
         public OrderResponse checkout(
                         String email,
                         String idempotencyKey) {
+                metrics.checkoutAttempt();
 
                 if (idempotencyKey == null || idempotencyKey.isBlank()) {
                         throw new IllegalArgumentException(
