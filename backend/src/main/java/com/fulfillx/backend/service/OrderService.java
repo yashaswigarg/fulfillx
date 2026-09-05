@@ -30,6 +30,7 @@ public class OrderService {
         private final CartItemRepository cartItemRepository;
         private final InventoryService inventoryService;
         private final IdempotencyKeyRepository idempotencyKeyRepository;
+        private final PaymentService paymentService;
 
         public OrderService(
                         OrderRepository orderRepository,
@@ -37,13 +38,15 @@ public class OrderService {
                         CartRepository cartRepository,
                         CartItemRepository cartItemRepository,
                         InventoryService inventoryService,
-                        IdempotencyKeyRepository idempotencyKeyRepository) {
+                        IdempotencyKeyRepository idempotencyKeyRepository,
+                        PaymentService paymentService) {
                 this.orderRepository = orderRepository;
                 this.userRepository = userRepository;
                 this.cartRepository = cartRepository;
                 this.cartItemRepository = cartItemRepository;
                 this.inventoryService = inventoryService;
                 this.idempotencyKeyRepository = idempotencyKeyRepository;
+                this.paymentService = paymentService;
         }
 
         @Transactional
@@ -146,6 +149,7 @@ public class OrderService {
                                         savedOrder,
                                         orderItem);
                 }
+                paymentService.processPayment(savedOrder);
 
                 /*
                  * Save idempotency key and associate it with the order.
