@@ -51,6 +51,7 @@ public class PaymentService {
                     order.getId(),
                     "OrderPaid",
                     new OrderPaidEvent(
+                            null,
                             order.getId(),
                             order.getUser().getId(),
                             order.getTotalAmount()));

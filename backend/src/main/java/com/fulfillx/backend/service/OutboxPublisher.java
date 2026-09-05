@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fulfillx.backend.entity.OutboxEvent;
 import com.fulfillx.backend.entity.OutboxEventStatus;
 import com.fulfillx.backend.event.OrderPaidEvent;
+import com.fulfillx.backend.event.PublishedOrderPaidEvent;
 import com.fulfillx.backend.repository.OutboxEventRepository;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -35,6 +36,7 @@ public class OutboxPublisher {
                         OutboxEventStatus.PENDING);
 
         for (OutboxEvent event : events) {
+
             try {
 
                 if ("OrderPaid".equals(event.getEventType())) {
@@ -43,7 +45,14 @@ public class OutboxPublisher {
                             event.getPayload(),
                             OrderPaidEvent.class);
 
-                    eventPublisher.publishEvent(orderPaidEvent);
+                    PublishedOrderPaidEvent publishedEvent = new PublishedOrderPaidEvent(
+                            event.getId(),
+                            orderPaidEvent.orderId(),
+                            orderPaidEvent.userId(),
+                            orderPaidEvent.amount());
+
+                    eventPublisher.publishEvent(
+                            publishedEvent);
                 }
 
                 event.markPublished();
@@ -52,11 +61,24 @@ public class OutboxPublisher {
 
                 event.incrementRetry();
 
-                System.err.println(
-                        "Failed to publish outbox event "
-                                + event.getId()
-                                + ": "
-                                + e.getMessage());
+                if (event.getRetryCount() >= 5) {
+
+                    event.markFailed();
+
+                    System.err.println(
+                            "Outbox event permanently failed: "
+                                    + event.getId());
+
+                } else {
+
+                    System.err.println(
+                            "Failed to publish outbox event "
+                                    + event.getId()
+                                    + " (attempt "
+                                    + event.getRetryCount()
+                                    + "): "
+                                    + e.getMessage());
+                }
             }
         }
 

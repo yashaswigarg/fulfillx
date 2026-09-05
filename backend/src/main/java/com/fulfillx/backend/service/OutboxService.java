@@ -21,7 +21,7 @@ public class OutboxService {
     }
 
     @Transactional
-    public void saveEvent(
+    public OutboxEvent saveEvent(
             String aggregateType,
             Long aggregateId,
             String eventType,
@@ -35,7 +35,7 @@ public class OutboxService {
                     eventType,
                     payload);
 
-            outboxEventRepository.save(outboxEvent);
+            return outboxEventRepository.save(outboxEvent);
 
         } catch (JsonProcessingException e) {
             throw new IllegalArgumentException(
