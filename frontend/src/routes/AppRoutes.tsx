@@ -7,7 +7,7 @@ import {
 import LoginPage from "../pages/LoginPage";
 import RegisterPage from "../pages/RegisterPage";
 import ProtectedRoute from "./ProtectedRoute";
-
+import ProductsPage from "../pages/ProductsPage";
 import Layout from "../components/Layout";
 
 function HomePage() {
@@ -21,11 +21,6 @@ function HomePage() {
     );
 }
 
-
-
-function ProductsPage() {
-    return <h1>Products</h1>;
-}
 
 function CartPage() {
     return <h1>Cart</h1>;
