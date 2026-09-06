@@ -1,0 +1,62 @@
+export interface Product {
+    id: number;
+    name: string;
+    description: string | null;
+    sku: string;
+    price: number;
+    category: string;
+    stockQuantity: number;
+    active: boolean;
+    createdAt: string;
+    updatedAt: string;
+}
+
+export interface ProductPage {
+    content: Product[];
+    totalElements: number;
+    totalPages: number;
+    size: number;
+    number: number;
+}
+
+export interface CartItem {
+    id: number;
+    productId: number;
+    productName: string;
+    sku: string;
+    unitPrice: number;
+    quantity: number;
+    subtotal: number;
+}
+
+export interface Cart {
+    id: number;
+    items: CartItem[];
+    totalAmount: number;
+}
+
+export interface OrderItem {
+    id: number;
+    productId: number;
+    productName: string;
+    sku: string;
+    unitPrice: number;
+    quantity: number;
+    subtotal: number;
+}
+
+export interface Order {
+    id: number;
+    status: string;
+    totalAmount: number;
+    items: OrderItem[];
+    createdAt: string;
+    updatedAt: string;
+}
+
+export interface AuthResponse {
+    token: string;
+    userId: number;
+    email: string;
+    role: string;
+}
