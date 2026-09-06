@@ -4,6 +4,10 @@ import {
     Routes,
 } from "react-router-dom";
 
+import LoginPage from "../pages/LoginPage";
+import RegisterPage from "../pages/RegisterPage";
+import ProtectedRoute from "./ProtectedRoute";
+
 import Layout from "../components/Layout";
 
 function HomePage() {
@@ -17,9 +21,7 @@ function HomePage() {
     );
 }
 
-function LoginPage() {
-    return <h1>Login</h1>;
-}
+
 
 function ProductsPage() {
     return <h1>Products</h1>;
@@ -37,6 +39,7 @@ function AppRoutes() {
     return (
         <Routes>
             <Route element={<Layout />}>
+
                 <Route
                     path="/"
                     element={<HomePage />}
@@ -48,19 +51,28 @@ function AppRoutes() {
                 />
 
                 <Route
+                    path="/register"
+                    element={<RegisterPage />}
+                />
+
+                <Route
                     path="/products"
                     element={<ProductsPage />}
                 />
 
-                <Route
-                    path="/cart"
-                    element={<CartPage />}
-                />
+                <Route element={<ProtectedRoute />}>
 
-                <Route
-                    path="/orders"
-                    element={<OrdersPage />}
-                />
+                    <Route
+                        path="/cart"
+                        element={<CartPage />}
+                    />
+
+                    <Route
+                        path="/orders"
+                        element={<OrdersPage />}
+                    />
+
+                </Route>
 
                 <Route
                     path="*"
@@ -71,6 +83,7 @@ function AppRoutes() {
                         />
                     }
                 />
+
             </Route>
         </Routes>
     );
