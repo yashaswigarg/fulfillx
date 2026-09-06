@@ -8,9 +8,12 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController
 @RequestMapping("/api/v1/products")
+@Tag(name = "Products", description = "Product catalog management")
 public class ProductController {
 
     private final ProductService productService;
@@ -19,6 +22,7 @@ public class ProductController {
         this.productService = productService;
     }
 
+    @Operation(summary = "List products", description = "Returns paginated active products.")
     @GetMapping
     public Page<ProductResponse> getProducts(
             @RequestParam(required = false) String category,
@@ -37,6 +41,8 @@ public class ProductController {
 
         return productService.getProducts(category, pageable);
     }
+
+    @Operation(summary = "Create product", description = "Creates a product. Requires ADMIN role.")
 
     @PostMapping
     public ProductResponse createProduct(

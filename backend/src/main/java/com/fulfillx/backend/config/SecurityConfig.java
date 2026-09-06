@@ -12,6 +12,7 @@ import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.oauth2.jose.jws.MacAlgorithm;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.config.Customizer;
 
 import javax.crypto.SecretKey;
 
@@ -19,70 +20,78 @@ import javax.crypto.SecretKey;
 @EnableMethodSecurity
 public class SecurityConfig {
 
-    @Bean
-    public SecurityFilterChain securityFilterChain(
-            HttpSecurity http,
-            JwtDecoder jwtDecoder) throws Exception {
+        @Bean
+        public SecurityFilterChain securityFilterChain(
+                        HttpSecurity http,
+                        JwtDecoder jwtDecoder) throws Exception {
 
-        http
-                .csrf(csrf -> csrf.disable())
+                http
+                                .cors(Customizer.withDefaults())
 
-                .sessionManagement(session -> session.sessionCreationPolicy(
-                        SessionCreationPolicy.STATELESS))
+                                .csrf(csrf -> csrf.disable())
 
-                .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(
-                                "/api/v1/auth/**",
-                                "/api/v1/health",
-                                "/actuator/health")
-                        .permitAll()
+                                .sessionManagement(session -> session.sessionCreationPolicy(
+                                                SessionCreationPolicy.STATELESS))
 
-                        .requestMatchers(
-                                org.springframework.http.HttpMethod.GET,
-                                "/api/v1/products/**")
-                        .permitAll()
+                                .authorizeHttpRequests(auth -> auth
+                                                .requestMatchers(
+                                                                "/api/v1/auth/**",
+                                                                "/api/v1/health",
+                                                                "/actuator/health")
+                                                .permitAll()
 
-                        .requestMatchers(
-                                org.springframework.http.HttpMethod.POST,
-                                "/api/v1/products/**")
-                        .hasRole("ADMIN")
+                                                .requestMatchers(
+                                                                org.springframework.http.HttpMethod.GET,
+                                                                "/api/v1/products/**")
+                                                .permitAll()
 
-                        .anyRequest().authenticated())
+                                                .requestMatchers(
+                                                                "/swagger-ui.html",
+                                                                "/swagger-ui/**",
+                                                                "/api-docs/**")
+                                                .permitAll()
 
-                .oauth2ResourceServer(oauth2 -> oauth2.jwt(jwt -> jwt
-                        .decoder(jwtDecoder)
-                        .jwtAuthenticationConverter(jwtAuthenticationConverter())));
+                                                .requestMatchers(
+                                                                org.springframework.http.HttpMethod.POST,
+                                                                "/api/v1/products/**")
+                                                .hasRole("ADMIN")
 
-        return http.build();
-    }
+                                                .anyRequest().authenticated())
 
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
+                                .oauth2ResourceServer(oauth2 -> oauth2.jwt(jwt -> jwt
+                                                .decoder(jwtDecoder)
+                                                .jwtAuthenticationConverter(jwtAuthenticationConverter())));
 
-    @Bean
-    public JwtDecoder jwtDecoder(SecretKey secretKey) {
-        return NimbusJwtDecoder
-                .withSecretKey(secretKey)
-                .macAlgorithm(MacAlgorithm.HS256)
-                .build();
-    }
+                return http.build();
+        }
 
-    @Bean
-    public JwtAuthenticationConverter jwtAuthenticationConverter() {
+        @Bean
+        public PasswordEncoder passwordEncoder() {
+                return new BCryptPasswordEncoder();
+        }
 
-        JwtAuthenticationConverter converter = new JwtAuthenticationConverter();
+        @Bean
+        public JwtDecoder jwtDecoder(SecretKey secretKey) {
+                return NimbusJwtDecoder
+                                .withSecretKey(secretKey)
+                                .macAlgorithm(MacAlgorithm.HS256)
+                                .build();
+        }
 
-        converter.setJwtGrantedAuthoritiesConverter(jwt -> {
+        @Bean
+        public JwtAuthenticationConverter jwtAuthenticationConverter() {
 
-            String role = jwt.getClaimAsString("role");
+                JwtAuthenticationConverter converter = new JwtAuthenticationConverter();
 
-            return java.util.List.of(
-                    new org.springframework.security.core.authority.SimpleGrantedAuthority(
-                            "ROLE_" + role));
-        });
+                converter.setJwtGrantedAuthoritiesConverter(jwt -> {
 
-        return converter;
-    }
+                        String role = jwt.getClaimAsString("role");
+
+                        return java.util.List.of(
+                                        new org.springframework.security.core.authority.SimpleGrantedAuthority(
+                                                        "ROLE_" + role));
+                });
+
+                return converter;
+        }
 }

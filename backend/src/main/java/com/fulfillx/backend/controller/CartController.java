@@ -7,9 +7,14 @@ import com.fulfillx.backend.service.CartService;
 import jakarta.validation.Valid;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController
 @RequestMapping("/api/v1/cart")
+@Tag(name = "Cart", description = "Customer shopping cart operations")
+@SecurityRequirement(name = "bearerAuth")
 public class CartController {
 
     private final CartService cartService;
@@ -18,6 +23,7 @@ public class CartController {
         this.cartService = cartService;
     }
 
+    @Operation(summary = "Get current cart")
     @GetMapping
     public CartResponse getCart(
             Authentication authentication) {
@@ -25,6 +31,7 @@ public class CartController {
                 authentication.getName());
     }
 
+    @Operation(summary = "Add product to cart")
     @PostMapping("/items")
     public CartResponse addToCart(
             Authentication authentication,
@@ -34,6 +41,7 @@ public class CartController {
                 request);
     }
 
+    @Operation(summary = "Update cart item quantity")
     @PutMapping("/items/{itemId}")
     public CartResponse updateItem(
             Authentication authentication,
@@ -45,6 +53,7 @@ public class CartController {
                 request);
     }
 
+    @Operation(summary = "Remove cart item")
     @DeleteMapping("/items/{itemId}")
     public void removeItem(
             Authentication authentication,

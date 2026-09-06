@@ -8,9 +8,14 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 
 @RestController
 @RequestMapping("/api/v1/orders")
+@Tag(name = "Orders", description = "Order checkout and order history")
+@SecurityRequirement(name = "bearerAuth")
 public class OrderController {
 
         private final OrderService orderService;
@@ -19,6 +24,9 @@ public class OrderController {
                 this.orderService = orderService;
         }
 
+        @Operation(summary = "Checkout cart", description = "Creates an order, reserves inventory, "
+                        + "processes payment, and publishes "
+                        + "an OrderPaid event.")
         @PostMapping("/checkout")
         public ResponseEntity<OrderResponse> checkout(
                         Authentication authentication,
@@ -31,6 +39,7 @@ public class OrderController {
                 return ResponseEntity.ok(response);
         }
 
+        @Operation(summary = "Get order history")
         @GetMapping
         public ResponseEntity<Page<OrderResponse>> getOrders(
                         Authentication authentication,
@@ -55,6 +64,7 @@ public class OrderController {
                                                 pageable));
         }
 
+        @Operation(summary = "Get order by ID")
         @GetMapping("/{orderId}")
         public ResponseEntity<OrderResponse> getOrder(
                         Authentication authentication,
