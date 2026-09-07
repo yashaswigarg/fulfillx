@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { getProducts } from "../api/products";
 import { addToCart } from "../api/cart";
 import ProductCard from "../components/ProductCard";
@@ -26,7 +26,7 @@ function ProductsPage() {
     const [addingProductId, setAddingProductId] =
         useState<number | null>(null);
 
-    async function loadProducts() {
+    const loadProducts = useCallback(async () => {
         setLoading(true);
         setError("");
 
@@ -48,11 +48,12 @@ function ProductsPage() {
         } finally {
             setLoading(false);
         }
-    }
+    }, [page, category]);
 
     useEffect(() => {
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         loadProducts();
-    }, [page, category]);
+    }, [loadProducts]);
 
     async function handleAddToCart(
         productId: number

@@ -8,6 +8,8 @@ import LoginPage from "../pages/LoginPage";
 import RegisterPage from "../pages/RegisterPage";
 import ProtectedRoute from "./ProtectedRoute";
 import ProductsPage from "../pages/ProductsPage";
+import CartPage from "../pages/CartPage";
+import OrderDetailPage from "../pages/OrderDetailPage";
 import Layout from "../components/Layout";
 
 function HomePage() {
@@ -22,9 +24,6 @@ function HomePage() {
 }
 
 
-function CartPage() {
-    return <h1>Cart</h1>;
-}
 
 function OrdersPage() {
     return <h1>Orders</h1>;
@@ -65,6 +64,11 @@ function AppRoutes() {
                     <Route
                         path="/orders"
                         element={<OrdersPage />}
+                    />
+
+                    <Route
+                        path="/orders/:orderId"
+                        element={<OrderDetailPage />}
                     />
 
                 </Route>

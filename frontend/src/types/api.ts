@@ -24,3 +24,59 @@ export interface ProductPage {
     size: number;
     number: number;
 }
+
+export interface CartItem {
+    id: number;
+    productId: number;
+    productName: string;
+    sku: string;
+    unitPrice: number;
+    quantity: number;
+    subtotal: number;
+}
+
+export interface Cart {
+    id: number;
+    items: CartItem[];
+    totalAmount: number;
+}
+
+export interface OrderItem {
+    id: number;
+    productId: number;
+    productName: string;
+    sku: string;
+    unitPrice: number;
+    quantity: number;
+    subtotal: number;
+}
+
+export interface Order {
+    id: number;
+    status: string;
+    totalAmount: number;
+    items: OrderItem[];
+    createdAt: string;
+    updatedAt: string;
+}
+
+export interface OrderPage {
+    content: Order[];
+    pageable: {
+        pageNumber: number;
+        pageSize: number;
+    };
+    totalElements: number;
+    totalPages: number;
+    first: boolean;
+    last: boolean;
+    size: number;
+    number: number;
+}
+
+export interface AuthResponse {
+    token: string;
+    userId: number;
+    email: string;
+    role: string;
+}
