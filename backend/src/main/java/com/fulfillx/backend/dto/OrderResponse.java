@@ -5,9 +5,11 @@ import java.time.OffsetDateTime;
 import java.util.List;
 
 public record OrderResponse(
-        Long id,
-        String status,
-        BigDecimal totalAmount,
-        OffsetDateTime createdAt,
-        List<OrderItemResponse> items) {
+                Long id,
+                String status,
+                BigDecimal totalAmount,
+                List<OrderItemResponse> items,
+                String fulfillmentStatus,
+                OffsetDateTime createdAt,
+                OffsetDateTime updatedAt) {
 }

@@ -122,7 +122,7 @@ public class CartService {
     }
 
     @Transactional
-    public void removeItem(
+    public CartResponse removeItem(
             String email,
             Long itemId) {
 
@@ -144,6 +144,9 @@ public class CartService {
         }
 
         cartItemRepository.delete(item);
+        cartItemRepository.flush();
+
+        return toResponse(cart);
     }
 
     private User getUser(String email) {

@@ -41,6 +41,14 @@ export interface Cart {
     totalAmount: number;
 }
 
+export interface AuthResponse {
+    accessToken: string;
+    tokenType: string;
+    userId: number;
+    email: string;
+    role: string;
+}
+
 export interface OrderItem {
     id: number;
     productId: number;
@@ -56,6 +64,7 @@ export interface Order {
     status: string;
     totalAmount: number;
     items: OrderItem[];
+    fulfillmentStatus?: string;
     createdAt: string;
     updatedAt: string;
 }
@@ -72,11 +81,4 @@ export interface OrderPage {
     last: boolean;
     size: number;
     number: number;
-}
-
-export interface AuthResponse {
-    token: string;
-    userId: number;
-    email: string;
-    role: string;
 }

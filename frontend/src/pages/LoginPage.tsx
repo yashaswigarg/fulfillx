@@ -27,7 +27,7 @@ function LoginPage() {
                 password,
             });
 
-            saveToken(response.token);
+            saveToken(response.accessToken);
 
             navigate("/products");
         } catch {

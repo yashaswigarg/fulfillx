@@ -55,10 +55,10 @@ public class CartController {
 
     @Operation(summary = "Remove cart item")
     @DeleteMapping("/items/{itemId}")
-    public void removeItem(
+    public CartResponse removeItem(
             Authentication authentication,
             @PathVariable Long itemId) {
-        cartService.removeItem(
+        return cartService.removeItem(
                 authentication.getName(),
                 itemId);
     }

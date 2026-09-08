@@ -11,6 +11,7 @@ import com.fulfillx.backend.entity.OrderItem;
 import com.fulfillx.backend.entity.User;
 import com.fulfillx.backend.repository.CartItemRepository;
 import com.fulfillx.backend.repository.CartRepository;
+import com.fulfillx.backend.repository.FulfillmentRepository;
 import com.fulfillx.backend.repository.IdempotencyKeyRepository;
 import com.fulfillx.backend.repository.OrderRepository;
 import com.fulfillx.backend.repository.UserRepository;
@@ -32,6 +33,7 @@ public class OrderService {
         private final InventoryService inventoryService;
         private final IdempotencyKeyRepository idempotencyKeyRepository;
         private final PaymentService paymentService;
+        private final FulfillmentRepository fulfillmentRepository;
         private final FulfillXMetrics metrics;
 
         public OrderService(
@@ -42,6 +44,7 @@ public class OrderService {
                         InventoryService inventoryService,
                         IdempotencyKeyRepository idempotencyKeyRepository,
                         PaymentService paymentService,
+                        FulfillmentRepository fulfillmentRepository,
                         FulfillXMetrics metrics) {
                 this.orderRepository = orderRepository;
                 this.userRepository = userRepository;
@@ -50,6 +53,7 @@ public class OrderService {
                 this.inventoryService = inventoryService;
                 this.idempotencyKeyRepository = idempotencyKeyRepository;
                 this.paymentService = paymentService;
+                this.fulfillmentRepository = fulfillmentRepository;
                 this.metrics = metrics;
         }
 
@@ -231,20 +235,18 @@ public class OrderService {
                                                 item.getSubtotal()))
                                 .toList();
 
-                /*
-                 * OrderResponse constructor:
-                 *
-                 * Long id
-                 * String status
-                 * BigDecimal totalAmount
-                 * OffsetDateTime createdAt
-                 * List<OrderItemResponse> items
-                 */
+                String fulfillmentStatus = fulfillmentRepository
+                                .findByOrderId(order.getId())
+                                .map(f -> f.getStatus().name())
+                                .orElse(null);
+
                 return new OrderResponse(
                                 order.getId(),
                                 order.getStatus().name(),
                                 order.getTotalAmount(),
+                                items,
+                                fulfillmentStatus,
                                 order.getCreatedAt(),
-                                items);
+                                order.getUpdatedAt());
         }
 }

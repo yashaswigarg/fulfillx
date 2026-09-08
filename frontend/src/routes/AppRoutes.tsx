@@ -10,6 +10,7 @@ import ProtectedRoute from "./ProtectedRoute";
 import ProductsPage from "../pages/ProductsPage";
 import CartPage from "../pages/CartPage";
 import OrderDetailPage from "../pages/OrderDetailPage";
+import OrdersPage from "../pages/OrdersPage";
 import Layout from "../components/Layout";
 
 function HomePage() {
@@ -21,12 +22,6 @@ function HomePage() {
             </p>
         </div>
     );
-}
-
-
-
-function OrdersPage() {
-    return <h1>Orders</h1>;
 }
 
 function AppRoutes() {

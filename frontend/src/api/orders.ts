@@ -1,5 +1,8 @@
 import apiClient from "./client";
-import type { Order, OrderPage } from "../types/api";
+import type {
+    Order,
+    OrderPage,
+} from "../types/api";
 
 export async function checkout(): Promise<Order> {
     const idempotencyKey =
@@ -8,7 +11,7 @@ export async function checkout(): Promise<Order> {
     const response =
         await apiClient.post<Order>(
             "/orders/checkout",
-            null,
+            {},
             {
                 headers: {
                     "Idempotency-Key":
@@ -20,6 +23,23 @@ export async function checkout(): Promise<Order> {
     return response.data;
 }
 
+export async function getOrders(
+    page = 0,
+    size = 10
+): Promise<OrderPage> {
+    const response =
+        await apiClient.get<OrderPage>(
+            "/orders",
+            {
+                params: {
+                    page,
+                    size,
+                },
+            }
+        );
+
+    return response.data;
+}
 
 export async function getOrder(
     orderId: number
@@ -27,15 +47,6 @@ export async function getOrder(
     const response =
         await apiClient.get<Order>(
             `/orders/${orderId}`
-        );
-
-    return response.data;
-}
-
-export async function getOrders(): Promise<OrderPage> {
-    const response =
-        await apiClient.get<OrderPage>(
-            "/orders"
         );
 
     return response.data;
