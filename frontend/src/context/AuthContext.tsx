@@ -1,13 +1,16 @@
 import {
     createContext,
     useContext,
+    useEffect,
     useState,
     type ReactNode,
 } from "react";
+import { getCurrentUser } from "../api/users";
 
 interface AuthContextValue {
     token: string | null;
-    login: (token: string) => void;
+    role: string | null;
+    login: (token: string) => Promise<void>;
     logout: () => void;
     isAuthenticated: boolean;
 }
@@ -26,14 +29,36 @@ export function AuthProvider({
         useState<string | null>(
             localStorage.getItem("accessToken")
         );
+    const [role, setRole] =
+        useState<string | null>(null);
 
-    function login(newToken: string) {
+    useEffect(() => {
+        if (!token) {
+            return;
+        }
+
+        getCurrentUser()
+            .then((user) => setRole(user.role))
+            .catch(() => {
+                localStorage.removeItem("accessToken");
+                setToken(null);
+                setRole(null);
+            });
+    }, [token]);
+
+    async function login(newToken: string) {
         localStorage.setItem(
             "accessToken",
             newToken
         );
 
         setToken(newToken);
+        try {
+            const user = await getCurrentUser();
+            setRole(user.role);
+        } catch {
+            setRole(null);
+        }
     }
 
     function logout() {
@@ -42,12 +67,14 @@ export function AuthProvider({
         );
 
         setToken(null);
+        setRole(null);
     }
 
     return (
         <AuthContext.Provider
             value={{
                 token,
+                role,
                 login,
                 logout,
                 isAuthenticated: !!token,

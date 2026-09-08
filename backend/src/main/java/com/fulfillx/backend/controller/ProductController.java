@@ -7,6 +7,7 @@ import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -49,4 +50,14 @@ public class ProductController {
             @Valid @RequestBody ProductCreateRequest request) {
         return productService.createProduct(request);
     }
+
+    @PutMapping("/{id}/stock")
+    @PreAuthorize("hasRole('ADMIN')")
+    @Operation(summary = "Update product stock", description = "Updates inventory quantity for a product")
+    public ProductResponse updateStock(
+            @PathVariable Long id,
+            @RequestParam Integer quantity) {
+        return productService.updateStock(id, quantity);
+    }
+
 }

@@ -4,6 +4,7 @@ import { useAuth } from "../context/AuthContext";
 function Layout() {
     const {
         isAuthenticated,
+        role,
         logout,
     } = useAuth();
 
@@ -21,6 +22,13 @@ function Layout() {
                     <Link to="/orders">
                         Orders
                     </Link>{" "}
+                    {role === "ADMIN" && (
+                        <>
+                            <Link to="/admin">
+                                Admin
+                            </Link>{" "}
+                        </>
+                    )}
 
                     {isAuthenticated ? (
                         <button onClick={logout}>

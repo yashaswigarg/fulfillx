@@ -7,6 +7,7 @@ import com.fulfillx.backend.repository.ProductRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class ProductService {
@@ -65,5 +66,31 @@ public class ProductService {
                 product.getActive(),
                 product.getCreatedAt(),
                 product.getUpdatedAt());
+    }
+
+    @Transactional
+    public ProductResponse updateStock(
+            Long productId,
+            Integer quantity
+    ) {
+        if (quantity == null || quantity < 0) {
+            throw new IllegalArgumentException(
+                    "Stock quantity cannot be negative"
+            );
+        }
+
+        Product product = productRepository
+                .findById(productId)
+                .orElseThrow(() ->
+                        new IllegalArgumentException(
+                                "Product not found"
+                        )
+                );
+
+        product.setStockQuantity(quantity);
+
+        return toResponse(
+                productRepository.save(product)
+        );
     }
 }

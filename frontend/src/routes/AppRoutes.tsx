@@ -7,11 +7,14 @@ import {
 import LoginPage from "../pages/LoginPage";
 import RegisterPage from "../pages/RegisterPage";
 import ProtectedRoute from "./ProtectedRoute";
+import AdminRoute from "./AdminRoute";
 import ProductsPage from "../pages/ProductsPage";
 import CartPage from "../pages/CartPage";
 import OrderDetailPage from "../pages/OrderDetailPage";
 import OrdersPage from "../pages/OrdersPage";
+import AdminDashboardPage from "../pages/AdminDashboardPage";
 import Layout from "../components/Layout";
+import { useAuth } from "../context/AuthContext";
 
 function HomePage() {
     return (
@@ -25,6 +28,8 @@ function HomePage() {
 }
 
 function AppRoutes() {
+    const { role } = useAuth();
+
     return (
         <Routes>
             <Route element={<Layout />}>
@@ -65,6 +70,13 @@ function AppRoutes() {
                         path="/orders/:orderId"
                         element={<OrderDetailPage />}
                     />
+
+                    <Route element={<AdminRoute role={role} />}>
+                        <Route
+                            path="/admin"
+                            element={<AdminDashboardPage />}
+                        />
+                    </Route>
 
                 </Route>
 
