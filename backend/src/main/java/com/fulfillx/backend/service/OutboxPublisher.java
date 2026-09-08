@@ -3,10 +3,10 @@ package com.fulfillx.backend.service;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fulfillx.backend.entity.OutboxEvent;
 import com.fulfillx.backend.entity.OutboxEventStatus;
+import com.fulfillx.backend.event.AwsEventPublisher;
 import com.fulfillx.backend.event.OrderPaidEvent;
 import com.fulfillx.backend.event.PublishedOrderPaidEvent;
 import com.fulfillx.backend.repository.OutboxEventRepository;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,16 +15,16 @@ import org.springframework.transaction.annotation.Transactional;
 public class OutboxPublisher {
 
     private final OutboxEventRepository outboxEventRepository;
-    private final ApplicationEventPublisher eventPublisher;
     private final ObjectMapper objectMapper;
+    private final AwsEventPublisher awsEventPublisher;
 
     public OutboxPublisher(
             OutboxEventRepository outboxEventRepository,
-            ApplicationEventPublisher eventPublisher,
-            ObjectMapper objectMapper) {
+            ObjectMapper objectMapper,
+            AwsEventPublisher awsEventPublisher) {
         this.outboxEventRepository = outboxEventRepository;
-        this.eventPublisher = eventPublisher;
         this.objectMapper = objectMapper;
+        this.awsEventPublisher = awsEventPublisher;
     }
 
     @Scheduled(fixedDelay = 5000)
@@ -51,7 +51,7 @@ public class OutboxPublisher {
                             orderPaidEvent.userId(),
                             orderPaidEvent.amount());
 
-                    eventPublisher.publishEvent(
+                    awsEventPublisher.publish(
                             publishedEvent);
                 }
 

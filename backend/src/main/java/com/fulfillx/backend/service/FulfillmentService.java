@@ -7,7 +7,6 @@ import com.fulfillx.backend.event.PublishedOrderPaidEvent;
 import com.fulfillx.backend.repository.FulfillmentRepository;
 import com.fulfillx.backend.repository.OrderRepository;
 import com.fulfillx.backend.repository.ProcessedEventRepository;
-import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,9 +28,8 @@ public class FulfillmentService {
         this.processedEventRepository = processedEventRepository;
     }
 
-    @EventListener
     @Transactional
-    public void handleOrderPaid(
+    public void processOrderPaidEvent(
             PublishedOrderPaidEvent event) {
 
         if (processedEventRepository

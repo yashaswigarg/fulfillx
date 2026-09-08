@@ -4,25 +4,27 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.testcontainers.containers.PostgreSQLContainer;
-import org.testcontainers.junit.jupiter.Container;
-import org.testcontainers.junit.jupiter.Testcontainers;
 
-@Testcontainers
 @SpringBootTest
 public abstract class PostgresIntegrationTest {
 
-    @Container
-    static PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:16")
-            .withDatabaseName("fulfillx_test")
-            .withUsername("fulfillx")
-            .withPassword("fulfillx_test_password");
+    static final PostgreSQLContainer<?> postgres;
+
+    static {
+        postgres = new PostgreSQLContainer<>("postgres:16")
+                .withDatabaseName("fulfillx_test")
+                .withUsername("fulfillx")
+                .withPassword("fulfillx_test_password")
+                .withEnv("TZ", "UTC");
+        postgres.start();
+    }
 
     @DynamicPropertySource
     static void configureDatabase(
             DynamicPropertyRegistry registry) {
         registry.add(
                 "spring.datasource.url",
-                postgres::getJdbcUrl);
+                () -> postgres.getJdbcUrl() + "&options=-c%20timezone=UTC");
 
         registry.add(
                 "spring.datasource.username",
