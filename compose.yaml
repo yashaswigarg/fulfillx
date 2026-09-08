@@ -1,7 +1,7 @@
 services:
 
   postgres:
-    image: postgres:18
+    image: postgres:16
     container_name: fulfillx-postgres
 
     environment:
@@ -10,10 +10,66 @@ services:
       POSTGRES_PASSWORD: fulfillx_dev_password
 
     ports:
-      - "5433:5432"
+      - "5432:5432"
 
     volumes:
-      - postgres_data:/var/lib/postgresql
+      - postgres_data:/var/lib/postgresql/data
+
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "pg_isready -U fulfillx -d fulfillx"
+        ]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+
+  backend:
+    build:
+      context: ./backend
+
+    container_name: fulfillx-backend
+
+    environment:
+      DB_URL: jdbc:postgresql://postgres:5432/fulfillx
+      DB_USERNAME: fulfillx
+      DB_PASSWORD: fulfillx_dev_password
+      JWT_SECRET: ${JWT_SECRET}
+      JWT_EXPIRATION_MS: 3600000
+
+    ports:
+      - "8080:8080"
+
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "wget --spider -q http://localhost:8080/actuator/health || exit 1"
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+
+  frontend:
+    build:
+      context: ./frontend
+
+    container_name: fulfillx-frontend
+
+    ports:
+      - "5173:80"
+
+    depends_on:
+      backend:
+        condition: service_healthy
+
 
 volumes:
   postgres_data:
