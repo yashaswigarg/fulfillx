@@ -184,11 +184,11 @@ function Layout() {
                                 Craft Clusters
                             </h4>
                             <ul className="space-y-2 text-xs text-stone-400">
-                                <li className="hover:text-stone-200 transition-colors">Channapatna Wooden Toys (Karnataka)</li>
-                                <li className="hover:text-stone-200 transition-colors">Jaipur Blue Pottery (Rajasthan)</li>
-                                <li className="hover:text-stone-200 transition-colors">Varanasi Katan Silk (Uttar Pradesh)</li>
-                                <li className="hover:text-stone-200 transition-colors">Bastar Dhokra Bronze (Chhattisgarh)</li>
-                                <li className="hover:text-stone-200 transition-colors">Kutch Rogan & Ajrakh (Gujarat)</li>
+                                <li className="hover:text-stone-200 transition-colors">Phulkari & Pashmina Shawls (North)</li>
+                                <li className="hover:text-stone-200 transition-colors">Mysore Wood Inlay & Bidriware (South)</li>
+                                <li className="hover:text-stone-200 transition-colors">Madhubani & Pattachitra (East)</li>
+                                <li className="hover:text-stone-200 transition-colors">Bamboo & Cane Crafts (Assam / North-East)</li>
+                                <li className="hover:text-stone-200 transition-colors">Kutch Mirror Work & Dhokra Bronze (West/Central)</li>
                             </ul>
                         </div>
 

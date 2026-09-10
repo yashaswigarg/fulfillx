@@ -5,15 +5,23 @@ import { useCart } from "../context/CartContext";
 import { useAuth } from "../context/AuthContext";
 import ProductCard from "../components/ProductCard";
 import type { Product } from "../types/api";
-import { Sparkles, ChevronLeft, ChevronRight, CheckCircle2, AlertCircle, Layers, Search, X } from "lucide-react";
+import { Sparkles, ChevronLeft, ChevronRight, CheckCircle2, AlertCircle, Layers, Search, X, MapPin } from "lucide-react";
 
 const CRAFT_CATEGORIES = [
     { label: "All Crafts", value: "" },
-    { label: "Woodcraft & Toys", value: "woodcraft" },
+    { label: "Woodcraft & Inlay", value: "woodcraft" },
     { label: "Ceramics & Pottery", value: "pottery" },
     { label: "Handloom & Textiles", value: "textiles" },
-    { label: "Tribal Metalcraft", value: "metalcraft" },
-    { label: "Folk Painting & Clay", value: "painting" },
+    { label: "Metalcraft & Bidri", value: "metalcraft" },
+    { label: "Folk Painting & Scrolls", value: "painting" },
+];
+
+const REGIONAL_ZONES = [
+    { label: "All Regions", value: "" },
+    { label: "Northern India", value: "north" },
+    { label: "Southern India", value: "south" },
+    { label: "Eastern & North-Eastern", value: "east" },
+    { label: "Western & Central", value: "west" },
 ];
 
 function ProductsPage() {
@@ -28,6 +36,7 @@ function ProductsPage() {
     const [page, setPage] = useState(0);
     const [totalPages, setTotalPages] = useState(0);
     const [category, setCategory] = useState("");
+    const [region, setRegion] = useState("");
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
     const [addingProductId, setAddingProductId] = useState<number | null>(null);
@@ -92,6 +101,11 @@ function ProductsPage() {
         setPage(0);
     }
 
+    function handleRegionSelect(val: string) {
+        setRegion(val);
+        setPage(0);
+    }
+
     function handleSearchSubmit(e: FormEvent) {
         e.preventDefault();
         const next = new URLSearchParams(searchParams);
@@ -112,8 +126,22 @@ function ProductsPage() {
         setPage(0);
     }
 
-    // Real-time client search filtering across multiple artisan attributes
+    // Real-time client search filtering across multiple artisan attributes and regional zones
     const filteredProducts = products.filter((product) => {
+        if (region === "north") {
+            const state = (product.originState || "").toLowerCase();
+            if (!state.includes("punjab") && !state.includes("rajasthan") && !state.includes("kashmir")) return false;
+        } else if (region === "south") {
+            const state = (product.originState || "").toLowerCase();
+            if (!state.includes("karnataka") && !state.includes("tamil")) return false;
+        } else if (region === "east") {
+            const state = (product.originState || "").toLowerCase();
+            if (!state.includes("bihar") && !state.includes("odisha") && !state.includes("assam")) return false;
+        } else if (region === "west") {
+            const state = (product.originState || "").toLowerCase();
+            if (!state.includes("gujarat") && !state.includes("chhattisgarh") && !state.includes("bengal")) return false;
+        }
+
         if (!searchQuery.trim()) return true;
         const q = searchQuery.toLowerCase().trim();
         return (
@@ -175,7 +203,7 @@ function ProductsPage() {
                         type="text"
                         value={searchInput}
                         onChange={(e) => setSearchInput(e.target.value)}
-                        placeholder="Search crafts, artisans, towns (e.g. Channapatna, Pottery, Silk)..."
+                        placeholder="Search crafts, artisans, towns (e.g. Phulkari, Pashmina, Bidriware)..."
                         className="w-full bg-white border border-stone-200 rounded-xl pl-10 pr-10 py-2.5 text-xs text-stone-800 placeholder-stone-400 focus:outline-none focus:ring-2 focus:ring-artisan-500/30 focus:border-artisan-500 shadow-2xs transition-all"
                     />
                     {searchInput && (
@@ -203,28 +231,54 @@ function ProductsPage() {
                 )}
             </div>
 
-            {/* Category Filter Pills */}
-            <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none">
-                <span className="text-xs font-semibold text-stone-400 uppercase tracking-wider shrink-0 mr-1 flex items-center gap-1">
-                    <Layers className="w-3.5 h-3.5" />
-                    <span>Crafts:</span>
-                </span>
-                {CRAFT_CATEGORIES.map((cat) => {
-                    const isActive = category === cat.value;
-                    return (
-                        <button
-                            key={cat.value}
-                            onClick={() => handleCategorySelect(cat.value)}
-                            className={`px-4 py-2 rounded-full text-xs font-semibold shrink-0 transition-all cursor-pointer ${
-                                isActive
-                                    ? "bg-artisan-700 text-white shadow-sm ring-2 ring-artisan-700/20"
-                                    : "bg-white text-stone-700 border border-stone-200 hover:border-artisan-400 hover:text-artisan-700"
-                            }`}
-                        >
-                            {cat.label}
-                        </button>
-                    );
-                })}
+            {/* Regional Zone Filter Pills */}
+            <div className="space-y-3 pt-2">
+                <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
+                    <span className="text-xs font-semibold text-stone-400 uppercase tracking-wider shrink-0 mr-1 flex items-center gap-1">
+                        <MapPin className="w-3.5 h-3.5 text-artisan-600" />
+                        <span>Region:</span>
+                    </span>
+                    {REGIONAL_ZONES.map((z) => {
+                        const isActive = region === z.value;
+                        return (
+                            <button
+                                key={z.value}
+                                onClick={() => handleRegionSelect(z.value)}
+                                className={`px-4 py-1.5 rounded-full text-xs font-semibold shrink-0 transition-all cursor-pointer ${
+                                    isActive
+                                        ? "bg-amber-800 text-white shadow-sm ring-2 ring-amber-800/20"
+                                        : "bg-white text-stone-700 border border-stone-200 hover:border-amber-400 hover:text-amber-800"
+                                }`}
+                            >
+                                {z.label}
+                            </button>
+                        );
+                    })}
+                </div>
+
+                {/* Craft Category Filter Pills */}
+                <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
+                    <span className="text-xs font-semibold text-stone-400 uppercase tracking-wider shrink-0 mr-1 flex items-center gap-1">
+                        <Layers className="w-3.5 h-3.5" />
+                        <span>Craft:</span>
+                    </span>
+                    {CRAFT_CATEGORIES.map((cat) => {
+                        const isActive = category === cat.value;
+                        return (
+                            <button
+                                key={cat.value}
+                                onClick={() => handleCategorySelect(cat.value)}
+                                className={`px-4 py-1.5 rounded-full text-xs font-semibold shrink-0 transition-all cursor-pointer ${
+                                    isActive
+                                        ? "bg-artisan-700 text-white shadow-sm ring-2 ring-artisan-700/20"
+                                        : "bg-white text-stone-700 border border-stone-200 hover:border-artisan-400 hover:text-artisan-700"
+                                }`}
+                            >
+                                {cat.label}
+                            </button>
+                        );
+                    })}
+                </div>
             </div>
 
             {/* Content States */}
@@ -253,18 +307,19 @@ function ProductsPage() {
                         <h3 className="font-serif text-xl font-bold text-stone-800">
                             {searchQuery
                                 ? `No crafts found matching "${searchQuery}"`
-                                : "No crafts found in this category"}
+                                : "No crafts found in this selection"}
                         </h3>
                         <p className="text-xs text-stone-500">
                             {searchQuery
-                                ? "Try searching for another craft, region (e.g. Varanasi, Pottery), or clear the search."
-                                : "Try selecting 'All Crafts' or clear your filter."}
+                                ? "Try searching for another craft, region (e.g. Phulkari, Kashmir, Bidriware), or clear the search."
+                                : "Try clearing your region or craft filter."}
                         </p>
                     </div>
                     <button
                         onClick={() => {
                             handleClearSearch();
                             handleCategorySelect("");
+                            handleRegionSelect("");
                         }}
                         className="px-5 py-2.5 rounded-xl bg-artisan-600 text-white text-xs font-bold hover:bg-artisan-700"
                     >
@@ -285,7 +340,7 @@ function ProductsPage() {
             )}
 
             {/* Pagination Controls */}
-            {!loading && totalPages > 1 && !searchQuery && (
+            {!loading && totalPages > 1 && !searchQuery && !region && (
                 <div className="pt-8 border-t border-stone-200 flex items-center justify-between">
                     <button
                         disabled={page === 0}

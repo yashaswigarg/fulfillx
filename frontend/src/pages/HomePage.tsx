@@ -4,36 +4,36 @@ import { Sparkles, ArrowRight, ShieldCheck, Truck, MapPin, Award } from "lucide-
 export default function HomePage() {
     const craftClusters = [
         {
-            town: "Channapatna",
-            state: "Karnataka",
-            craft: "Lacquerware Woodcraft",
-            image: "https://images.unsplash.com/photo-1558060370-d644479cb6f7?auto=format&fit=crop&w=600&q=80",
-            artisan: "Somanna Gowda (National Awardee)",
-            description: "Hand-turned seasoned Hale wood with organic vegetable dyes."
-        },
-        {
-            town: "Jaipur",
-            state: "Rajasthan",
-            craft: "Cobalt Blue Pottery",
-            image: "https://images.unsplash.com/photo-1578749556568-bc2c40e68b61?auto=format&fit=crop&w=600&q=80",
-            artisan: "Kripal Kumbhar Collective",
-            description: "No clay used; crafted with quartz powder and glass."
-        },
-        {
-            town: "Varanasi",
-            state: "Uttar Pradesh",
-            craft: "Banarasi Handloom Silk",
+            town: "Patiala",
+            state: "Punjab (North)",
+            craft: "Phulkari Embroidery",
             image: "https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&w=600&q=80",
-            artisan: "Noor Mohammad & Family",
-            description: "Pure mulberry silk with antique kadhwa silver zari."
+            artisan: "Simranjeet Kaur & Self-Help Collective",
+            description: "Colorful, geometric flower embroidery on coarse cotton and chanderi fabric."
         },
         {
-            town: "Kondagaon",
-            state: "Chhattisgarh",
-            craft: "Bastar Dhokra Bronze",
-            image: "https://images.unsplash.com/photo-1544717305-2782549b5136?auto=format&fit=crop&w=600&q=80",
-            artisan: "Budhram Baghel & Tribal Guild",
-            description: "4,000-year-old lost-wax bell metal casting technique."
+            town: "Mysore",
+            state: "Karnataka (South)",
+            craft: "Mysore Wood Inlay",
+            image: "https://images.unsplash.com/photo-1544816155-12df9643f363?auto=format&fit=crop&w=600&q=80",
+            artisan: "Narayana Swamy Master Inlayer",
+            description: "Embeds fine cuts of colored natural wood veneers into solid timber panels."
+        },
+        {
+            town: "Madhubani",
+            state: "Bihar (East)",
+            craft: "Madhubani Painting",
+            image: "https://images.unsplash.com/photo-1579783900882-c0d3dad7b119?auto=format&fit=crop&w=600&q=80",
+            artisan: "Sunita Devi (Mithila Mahila Sangh)",
+            description: "Traditional folk paintings made with natural plant dyes depicting the sacred Tree of Life."
+        },
+        {
+            town: "Bhuj",
+            state: "Gujarat (West)",
+            craft: "Kutch Mirror Work",
+            image: "https://images.unsplash.com/photo-1584917865442-de89df76afd3?auto=format&fit=crop&w=600&q=80",
+            artisan: "Deviben Rabari Collective",
+            description: "Vibrant threadwork embedded with tiny mirrors, popular in apparel and decor."
         }
     ];
 
@@ -64,7 +64,7 @@ export default function HomePage() {
 
                         {/* Subtext */}
                         <p className="text-stone-600 text-base sm:text-lg leading-relaxed max-w-2xl mx-auto">
-                            Eliminating middlemen to empower generational craftspeople from Channapatna, Varanasi, Kutch, and Bastar with nationwide fair-price access.
+                            Eliminating middlemen to empower generational craftspeople from Punjab, Kashmir, Rajasthan, Karnataka, Bihar, Assam, and Gujarat with direct fair-price access.
                         </p>
 
                         {/* CTA buttons */}
