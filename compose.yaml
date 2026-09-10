@@ -2,12 +2,12 @@ services:
 
   postgres:
     image: postgres:16
-    container_name: fulfillx-postgres
+    container_name: karigarsetu-postgres
 
     environment:
-      POSTGRES_DB: fulfillx
-      POSTGRES_USER: fulfillx
-      POSTGRES_PASSWORD: fulfillx_dev_password
+      POSTGRES_DB: karigarsetu
+      POSTGRES_USER: karigarsetu
+      POSTGRES_PASSWORD: karigarsetu_dev_password
 
     ports:
       - "5432:5432"
@@ -16,7 +16,7 @@ services:
       - postgres_data:/var/lib/postgresql/data
 
     healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -U fulfillx -d fulfillx" ]
+      test: [ "CMD-SHELL", "pg_isready -U karigarsetu -d karigarsetu" ]
       interval: 5s
       timeout: 5s
       retries: 10
@@ -25,12 +25,12 @@ services:
     build:
       context: ./backend
 
-    container_name: fulfillx-backend
+    container_name: karigarsetu-backend
 
     environment:
-      DB_URL: jdbc:postgresql://postgres:5432/fulfillx
-      DB_USERNAME: fulfillx
-      DB_PASSWORD: fulfillx_dev_password
+      DB_URL: jdbc:postgresql://postgres:5432/karigarsetu
+      DB_USERNAME: karigarsetu
+      DB_PASSWORD: karigarsetu_dev_password
       JWT_SECRET: ${JWT_SECRET}
       JWT_EXPIRATION_MS: 3600000
       AWS_REGION: ${AWS_REGION:-ap-south-1}
@@ -56,7 +56,7 @@ services:
       args:
         VITE_API_BASE_URL: http://localhost:8080/api/v1
 
-    container_name: fulfillx-frontend
+    container_name: karigarsetu-frontend
 
     ports:
       - "5173:80"

@@ -10,7 +10,6 @@ function AdminDashboardPage() {
     const [showAddModal, setShowAddModal] = useState(false);
     const [creating, setCreating] = useState(false);
 
-    // Form state for creating product
     const [name, setName] = useState("");
     const [description, setDescription] = useState("");
     const [sku, setSku] = useState("");
@@ -76,7 +75,6 @@ function AdminDashboardPage() {
 
             setProducts((curr) => [newProduct, ...curr]);
             setShowAddModal(false);
-            // Reset form
             setName("");
             setDescription("");
             setSku("");
@@ -98,7 +96,6 @@ function AdminDashboardPage() {
 
     return (
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8">
-            {/* Header */}
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-stone-200">
                 <div>
                     <span className="text-xs font-bold uppercase tracking-wider text-amber-800">
@@ -133,7 +130,6 @@ function AdminDashboardPage() {
                 </div>
             )}
 
-            {/* Metrics Grid */}
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
                 <div className="bg-white p-6 rounded-2xl border border-stone-200 shadow-xs flex items-center gap-4">
                     <div className="w-12 h-12 rounded-xl bg-artisan-100 text-artisan-700 flex items-center justify-center">
@@ -166,7 +162,6 @@ function AdminDashboardPage() {
                 </div>
             </div>
 
-            {/* Inventory Table */}
             <div className="bg-white rounded-2xl border border-stone-200 overflow-hidden shadow-xs">
                 <div className="p-5 border-b border-stone-100">
                     <h2 className="font-serif font-bold text-lg text-stone-900">
@@ -206,7 +201,6 @@ function AdminDashboardPage() {
                 )}
             </div>
 
-            {/* Add Product Modal */}
             {showAddModal && (
                 <div className="fixed inset-0 z-50 bg-stone-950/50 backdrop-blur-xs flex items-center justify-center p-4">
                     <div className="bg-white rounded-3xl border border-stone-200 max-w-2xl w-full p-6 sm:p-8 shadow-2xl space-y-6 max-h-[90vh] overflow-y-auto">

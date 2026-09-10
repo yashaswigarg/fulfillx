@@ -55,7 +55,6 @@ function OrderDetailPage() {
 
     return (
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8">
-            {/* Back to Orders */}
             <Link
                 to="/orders"
                 className="inline-flex items-center gap-2 text-xs font-semibold text-stone-500 hover:text-stone-900 transition-colors"
@@ -64,7 +63,6 @@ function OrderDetailPage() {
                 <span>Back to All Orders</span>
             </Link>
 
-            {/* Order Header */}
             <div className="bg-white rounded-2xl border border-stone-200 p-6 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div className="space-y-1">
                     <div className="flex items-center gap-2.5">
@@ -89,14 +87,12 @@ function OrderDetailPage() {
                 </div>
             </div>
 
-            {/* Order Fulfillment Timeline */}
             <FulfillmentStatus
                 status={order.fulfillmentStatus || "PENDING"}
                 trackingNumber={order.trackingNumber}
                 originHub={order.originHub}
             />
 
-            {/* Items Summary Table */}
             <div className="bg-white rounded-2xl border border-stone-200 overflow-hidden shadow-xs">
                 <div className="p-5 border-b border-stone-100 flex items-center justify-between">
                     <h2 className="font-serif font-bold text-lg text-stone-900">Handcrafted Items in This Shipment</h2>
@@ -127,7 +123,6 @@ function OrderDetailPage() {
                     ))}
                 </div>
 
-                {/* Price Summary Footer */}
                 <div className="p-5 bg-stone-50 border-t border-stone-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
                     <div className="flex items-center gap-2 text-emerald-800 font-medium">
                         <ShieldCheck className="w-4 h-4 text-emerald-600" />

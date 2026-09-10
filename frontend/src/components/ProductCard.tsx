@@ -50,7 +50,6 @@ function ProductCard({ product, onAddToCart, adding }: ProductCardProps) {
 
     return (
         <article className="group bg-white rounded-2xl border border-stone-200/80 shadow-xs hover:shadow-xl hover:border-artisan-300 transition-all duration-300 flex flex-col overflow-hidden">
-            {/* Image & Badges Container */}
             <div className="relative aspect-4/3 overflow-hidden bg-stone-100">
                 <img
                     src={displayImage}
@@ -59,12 +58,10 @@ function ProductCard({ product, onAddToCart, adding }: ProductCardProps) {
                     loading="lazy"
                 />
 
-                {/* Craft Type Badge */}
                 <span className="absolute top-3 left-3 bg-stone-900/80 backdrop-blur-md text-amber-300 text-[11px] font-medium tracking-wide uppercase px-2.5 py-1 rounded-md shadow-xs">
                     {product.craftType || product.category}
                 </span>
 
-                {/* Regional Origin Pill */}
                 {(product.originTown || product.originState) && (
                     <span className="absolute bottom-3 left-3 bg-white/95 backdrop-blur-md text-stone-800 text-xs font-semibold px-2.5 py-1 rounded-full shadow-xs flex items-center gap-1 border border-stone-100">
                         <MapPin className="w-3.5 h-3.5 text-artisan-600" />
@@ -75,34 +72,28 @@ function ProductCard({ product, onAddToCart, adding }: ProductCardProps) {
                     </span>
                 )}
 
-                {/* Rating */}
                 <div className="absolute top-3 right-3 bg-white/95 backdrop-blur-md px-2 py-0.5 rounded-full text-xs font-semibold text-stone-800 shadow-xs flex items-center gap-1">
                     <Star className="w-3.5 h-3.5 text-amber-500 fill-amber-500" />
                     <span>{product.rating ? Number(product.rating).toFixed(1) : "4.8"}</span>
                 </div>
             </div>
 
-            {/* Content Area */}
             <div className="p-5 flex-1 flex flex-col justify-between space-y-4">
                 <div className="space-y-2">
-                    {/* Artisan Signature */}
                     <div className="flex items-center gap-1.5 text-xs text-artisan-800 font-medium">
                         <ShieldCheck className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
                         <span className="truncate">Handcrafted by {product.artisanName || "Master Artisan"}</span>
                     </div>
 
-                    {/* Product Name */}
                     <h3 className="font-serif font-bold text-lg text-stone-900 line-clamp-1 group-hover:text-artisan-700 transition-colors">
                         {product.name}
                     </h3>
 
-                    {/* Product Description */}
                     <p className="text-xs text-stone-500 line-clamp-2 leading-relaxed">
                         {product.description}
                     </p>
                 </div>
 
-                {/* Price and Stock Footer */}
                 <div className="pt-3 border-t border-stone-100 flex items-center justify-between gap-3">
                     <div>
                         <div className="flex items-baseline gap-1">
@@ -122,7 +113,6 @@ function ProductCard({ product, onAddToCart, adding }: ProductCardProps) {
                         </div>
                     </div>
 
-                    {/* Add to Cart Button */}
                     <button
                         disabled={outOfStock || adding}
                         onClick={() => onAddToCart(product.id)}

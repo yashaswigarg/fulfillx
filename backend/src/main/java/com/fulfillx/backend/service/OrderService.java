@@ -72,9 +72,6 @@ public class OrderService {
                                 .findByEmail(email)
                                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
 
-                /*
-                 * Check if this idempotency key was already used.
-                 */
                 var existingKey = idempotencyKeyRepository
                                 .findByUserIdAndIdempotencyKey(
                                                 user.getId(),
@@ -94,17 +91,10 @@ public class OrderService {
                                         "Request with this idempotency key is already being processed");
                 }
 
-                /*
-                 * Get user's cart.
-                 */
                 Cart cart = cartRepository
                                 .findByUserId(user.getId())
                                 .orElseThrow(() -> new IllegalArgumentException("Cart not found"));
 
-                /*
-                 * Cart does not have getItems().
-                 * Fetch cart items through CartItemRepository.
-                 */
                 List<CartItem> cartItems = cartItemRepository.findByCartId(cart.getId());
 
                 if (cartItems.isEmpty()) {
@@ -112,9 +102,6 @@ public class OrderService {
                                         "Cannot checkout an empty cart");
                 }
 
-                /*
-                 * Create a new order.
-                 */
                 Order order = new Order(user);
 
                 BigDecimal total = BigDecimal.ZERO;
@@ -123,13 +110,6 @@ public class OrderService {
 
                         var product = cartItem.getProduct();
 
-                        /*
-                         * OrderItem constructor automatically takes:
-                         * - product name
-                         * - SKU
-                         * - current price
-                         * - subtotal
-                         */
                         OrderItem orderItem = new OrderItem(
                                         order,
                                         product,
@@ -142,17 +122,8 @@ public class OrderService {
 
                 order.setTotalAmount(total);
 
-                /*
-                 * Save order first so it receives an ID.
-                 */
                 Order savedOrder = orderRepository.save(order);
 
-                /*
-                 * Reserve inventory for every order item.
-                 *
-                 * InventoryService uses a pessimistic row lock
-                 * to prevent overselling during concurrent checkout.
-                 */
                 for (OrderItem orderItem : savedOrder.getItems()) {
                         inventoryService.reserve(
                                         savedOrder,
@@ -160,9 +131,6 @@ public class OrderService {
                 }
                 paymentService.processPayment(savedOrder);
 
-                /*
-                 * Save idempotency key and associate it with the order.
-                 */
                 IdempotencyKey key = new IdempotencyKey(
                                 user,
                                 idempotencyKey);
@@ -171,9 +139,6 @@ public class OrderService {
 
                 idempotencyKeyRepository.save(key);
 
-                /*
-                 * Remove the items from the cart.
-                 */
                 cartItemRepository.deleteAll(cartItems);
 
                 return toResponse(savedOrder);
@@ -206,9 +171,6 @@ public class OrderService {
                                 .findById(orderId)
                                 .orElseThrow(() -> new IllegalArgumentException("Order not found"));
 
-                /*
-                 * Make sure the user owns this order.
-                 */
                 if (!order.getUser().getId().equals(user.getId())) {
                         throw new IllegalArgumentException(
                                         "You are not allowed to access this order");
@@ -219,9 +181,6 @@ public class OrderService {
 
         private OrderResponse toResponse(Order order) {
 
-                /*
-                 * Order DOES have getItems().
-                 */
                 List<OrderItemResponse> items = order
                                 .getItems()
                                 .stream()

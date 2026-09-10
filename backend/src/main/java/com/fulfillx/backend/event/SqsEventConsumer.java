@@ -81,13 +81,9 @@ public class SqsEventConsumer {
                 );
 
             } catch (Exception e) {
-                // Do not delete the message.
-                // SQS will retry it and eventually
-                // move it to the DLQ.
             }
         }
         } catch (Exception e) {
-            // SQS poll failed
         }
     }
 }

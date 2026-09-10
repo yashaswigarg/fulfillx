@@ -12,19 +12,18 @@ import org.springframework.context.annotation.Configuration;
 public class OpenApiConfig {
 
     @Bean
-    public OpenAPI fulfillXOpenAPI() {
+    public OpenAPI karigarSetuOpenAPI() {
 
         return new OpenAPI()
                 .info(
                         new Info()
-                                .title("FulfillX API")
+                                .title("KarigarSetu API")
                                 .version("v1")
                                 .description(
-                                        "Production-style ecommerce "
-                                                + "and fulfillment platform API.")
+                                        "Authentic Indian artisanal crafts and fulfillment platform API.")
                                 .contact(
                                         new Contact()
-                                                .name("FulfillX")))
+                                                .name("KarigarSetu")))
                 .components(
                         new Components()
                                 .addSecuritySchemes(

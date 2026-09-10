@@ -22,10 +22,6 @@ public class ImageStorageService {
         this.region = region;
     }
 
-    /**
-     * Generates a unique S3 object key and target public URL for handcrafted product images.
-     * Demonstrates S3 storage key partitioning by craft category and timestamp.
-     */
     public ImageUploadResponse generateUploadMetadata(String fileName, String craftCategory) {
         String cleanCategory = (craftCategory != null && !craftCategory.isBlank())
                 ? craftCategory.toLowerCase().replaceAll("[^a-z0-9]", "-")
@@ -34,7 +30,6 @@ public class ImageStorageService {
         String uniqueFileName = UUID.randomUUID().toString().substring(0, 8) + "-" + fileName;
         String s3Key = "craft-images/" + cleanCategory + "/" + uniqueFileName;
 
-        // AWS standard S3 object URL format
         String publicUrl = String.format("https://%s.s3.%s.amazonaws.com/%s", bucketName, region, s3Key);
 
         return new ImageUploadResponse(

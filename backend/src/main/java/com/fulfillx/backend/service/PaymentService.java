@@ -29,7 +29,6 @@ public class PaymentService {
     @Transactional
     public Payment processPayment(Order order) {
 
-        // Prevent duplicate payment creation
         var existingPayment = paymentRepository.findByOrderId(order.getId());
 
         if (existingPayment.isPresent()) {
@@ -42,12 +41,6 @@ public class PaymentService {
 
         paymentRepository.save(payment);
 
-        /*
-         * Simulated payment provider.
-         *
-         * In a real system this would call
-         * Stripe, Razorpay, Amazon Pay, etc.
-         */
         boolean paymentSuccessful = true;
 
         if (paymentSuccessful) {
@@ -58,12 +51,6 @@ public class PaymentService {
 
             Payment savedPayment = paymentRepository.save(payment);
 
-            /*
-             * Transactional Outbox:
-             *
-             * Payment update and event creation
-             * happen inside the same transaction.
-             */
             outboxService.saveEvent(
                     "ORDER",
                     order.getId(),

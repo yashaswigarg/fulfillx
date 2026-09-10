@@ -2,7 +2,6 @@ package com.fulfillx.backend.service;
 
 import com.fulfillx.backend.entity.User;
 import io.jsonwebtoken.Jwts;
-// import io.jsonwebtoken.security.SecretKey;
 import javax.crypto.SecretKey;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;

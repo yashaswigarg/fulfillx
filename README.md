@@ -1,25 +1,24 @@
-# FulfillX
+# KarigarSetu
 
-> Production-style distributed ecommerce and fulfillment platform built with Spring Boot, React, PostgreSQL, and AWS event-driven services.
+An e-commerce order processing and fulfillment platform built with **Spring Boot**, **PostgreSQL**, **AWS (EventBridge & SQS)**, and **React**.
 
 ---
 
 ## Overview
 
-**FulfillX** is a production-grade, distributed order processing and fulfillment system designed to demonstrate robust distributed systems patterns. It guarantees high availability, data consistency, and reliable asynchronous processing under concurrent load.
+**KarigarSetu** is an e-commerce platform connecting authentic Indian artisanal crafts with a reliable order fulfillment backend. The system implements core distributed patterns:
 
-At its core, FulfillX tackles the classic challenges of distributed microservices and ecommerce platforms:
-- **Dual-write consistency** using the **Transactional Outbox Pattern**.
-- **At-least-once delivery handling** with **two-tier idempotency** (at checkout ingestion and SQS fulfillment consumption).
-- **Zero overselling** via **pessimistic database locking** on inventory items during checkout.
-- **Asynchronous fulfillment decoupled via AWS EventBridge and Amazon SQS**.
-- **Observability** with Prometheus metrics, Spring Boot Actuator health checks, and correlation ID tracing.
+- **Transactional Outbox Pattern**: Decouples database transactions from message publishing to prevent dual-write inconsistencies.
+- **Idempotency Handling**: Client-side idempotency keys for checkout and database-backed event deduplication for SQS consumers.
+- **Pessimistic Inventory Locking**: Uses `SELECT ... FOR UPDATE` row locks to prevent overselling during concurrent checkout requests.
+- **Asynchronous Fulfillment**: Orders are fulfilled asynchronously via AWS EventBridge and Amazon SQS queues with DLQ retry handling.
+- **Observability**: Spring Boot Actuator health checks, Prometheus metrics, and correlation ID (MDC) request tracing.
 
 ---
 
 ## Architecture & Event Flow
 
-The system decouples the synchronous user checkout flow from the asynchronous order fulfillment pipeline:
+The synchronous checkout transaction is decoupled from downstream asynchronous fulfillment processing:
 
 ```mermaid
 sequenceDiagram
@@ -34,33 +33,33 @@ sequenceDiagram
     participant Consumer as SQS Consumer (Scheduled)
     participant Fulfill as Fulfillment Service
 
-    Customer->>FE: Click Checkout (Idempotency-Key)
+    Customer->>FE: Submit Checkout (with Idempotency-Key)
     FE->>BE: POST /api/v1/orders/checkout
     activate BE
     Note over BE,DB: Single ACID Transaction
-    BE->>DB: Check Idempotency Key
+    BE->>DB: Verify Idempotency Key
     BE->>DB: Reserve Inventory (SELECT ... FOR UPDATE)
-    BE->>DB: Create Order & Process Payment
+    BE->>DB: Create Order & Record Payment
     BE->>DB: Insert into outbox_events (OrderPaid)
-    BE->>DB: Save Idempotency Key & Clear Cart
+    BE->>DB: Store Idempotency Key & Clear Cart
     BE-->>FE: Order Confirmation (200 OK)
     deactivate BE
 
-    loop Every 5s
+    loop Scheduled (Every 5s)
         Outbox->>DB: Poll PENDING outbox_events
-        Outbox->>EB: Publish PublishedOrderPaidEvent
-        Outbox->>DB: Mark Outbox Event as PUBLISHED
+        Outbox->>EB: Publish OrderPaid event
+        Outbox->>DB: Mark outbox event as PUBLISHED
     end
 
-    EB->>SQS: Route OrderPaid events
-    loop Every 5s
-        Consumer->>SQS: Receive messages (Long polling)
+    EB->>SQS: Route OrderPaid events to Queue
+    loop Scheduled (Every 5s)
+        Consumer->>SQS: Poll messages (Long polling)
         Consumer->>Fulfill: Process event
         activate Fulfill
         Fulfill->>DB: Check processed_events (Deduplication)
-        alt Not Processed Yet
-            Fulfill->>DB: Create Fulfillment Record
-            Fulfill->>DB: Record processed event
+        alt Not Processed
+            Fulfill->>DB: Create Fulfillment record
+            Fulfill->>DB: Record event as processed
             Consumer->>SQS: Delete message from queue
         else Duplicate Event
             Consumer->>SQS: Delete duplicate message
@@ -71,35 +70,30 @@ sequenceDiagram
 
 ---
 
-## Core Engineering Features
+## Key Technical Patterns
 
-### 1. Transactional Outbox Pattern
-Directly publishing events to an external message broker within a database transaction risks dual-write anomalies (e.g. database commits, but message broker connection drops). FulfillX writes the domain event (`OrderPaid`) into the `outbox_events` table within the same ACID database transaction as the order and payment. A background worker (`OutboxPublisher`) reliably polls and publishes events to AWS EventBridge with automatic retry tracking (up to 5 retries before marking permanently failed).
+### 1. Transactional Outbox
+Publishing directly to an external message broker inside an active database transaction risks dual-write anomalies (e.g. database commits, but the broker connection drops). KarigarSetu writes an `OrderPaid` event to the `outbox_events` table in the same transaction as the order creation. A scheduled background worker (`OutboxPublisher`) then polls pending events and publishes them to AWS EventBridge with retry tracking (up to 5 retries before marking as failed).
 
 ### 2. Double-Sided Idempotency
-- **Ingress Idempotency:** The checkout endpoint enforces an `Idempotency-Key` HTTP header. Repeated requests with the same key replay the previous order response without re-charging the customer or re-reserving stock.
-- **Egress/Consumer Idempotency:** The SQS consumer checks the `processed_events` table before executing fulfillment logic. Repeated delivery of the same message is safely deduplicated.
+- **Checkout Ingestion:** The `/api/v1/orders/checkout` endpoint requires an `Idempotency-Key` header. Duplicate requests return the original response without duplicate order creation or billing.
+- **Consumer Processing:** The SQS consumer checks the `processed_events` table prior to fulfillment. If an event ID was already processed, it deletes the redundant message and skips re-fulfillment.
 
-### 3. Concurrency Control & Inventory Reservation
-During checkout, `InventoryService` acquires pessimistic database row locks (`SELECT ... FOR UPDATE` via `findByIdForUpdate`) on each product. This eliminates race conditions and guarantees stock will never be oversold during high-volume flash checkout bursts.
+### 3. Pessimistic Inventory Locking
+To avoid overselling when multiple users purchase the same item concurrently, `InventoryService` acquires row-level locks via `findByIdForUpdate` (`SELECT ... FOR UPDATE`). Other concurrent checkout transactions for that item wait until the current transaction commits or rolls back.
 
 ### 4. Asynchronous Cloud Fulfillment
-Order payment events flow through AWS EventBridge to an Amazon SQS queue (`fulfillx-fulfillment-queue`). The consumer performs long-polling with visibility timeout management and message deletion upon successful processing. Unprocessable messages are retained for automatic Dead-Letter Queue (DLQ) redrive.
+AWS EventBridge routes paid order events to an Amazon SQS queue. The SQS consumer uses long-polling to retrieve messages, processes fulfillment records in the database, and deletes completed messages. Unhandled errors leave the message in the queue for visibility timeout expiration and DLQ handling.
 
-### 5. Role-Based Access Control & JWT Security
-Stateless authentication using Spring Security and HMAC-SHA256 JWT tokens:
-- **`CUSTOMER`**: Browse catalog, manage cart, checkout orders, view own order history.
-- **`ADMIN`**: Create new products, update product stock levels, view administrative dashboards.
+### 5. Authentication & Role-Based Access Control
+Stateless authentication using JWT (HMAC-SHA256):
+- **`CUSTOMER`**: Browse catalog, add items to cart, checkout orders, and view personal order history.
+- **`ADMIN`**: Create products, upload images, update inventory stock, and monitor orders.
 
-### 6. Observability & Operational Readiness
-- **Metrics:** Custom Micrometer counters tracking business metrics:
-  - `fulfillx.checkout.total`
-  - `fulfillx.payment.success.total`
-  - `fulfillx.payment.failure.total`
-  - `fulfillx.inventory.failure.total`
-- **Prometheus & Actuator:** Available at `/actuator/prometheus` and `/actuator/health`.
-- **Tracing:** Correlation ID servlet filter assigns a unique correlation ID to each HTTP request and propagates it through log context (MDC).
-- **OpenAPI / Swagger:** Interactive API documentation available at `/swagger-ui.html`.
+### 6. Observability & Tracing
+- **Metrics:** Micrometer counters for business operations (`fulfillx.checkout.total`, `fulfillx.payment.success.total`, `fulfillx.payment.failure.total`, `fulfillx.inventory.failure.total`).
+- **Actuator & Prometheus:** Health endpoints at `/actuator/health` and Prometheus scraping at `/actuator/prometheus`.
+- **Request Tracing:** Correlation ID servlet filter attaches a unique correlation ID to every incoming request and includes it in log statements via MDC.
 
 ---
 
@@ -107,63 +101,46 @@ Stateless authentication using Spring Security and HMAC-SHA256 JWT tokens:
 
 | Layer | Technologies |
 |---|---|
-| **Backend** | Java 17, Spring Boot 4.1.1, Spring Data JPA, Spring Security, Springdoc OpenAPI (Swagger) |
+| **Backend** | Java 17, Spring Boot, Spring Data JPA, Spring Security, Springdoc OpenAPI (Swagger) |
 | **Database** | PostgreSQL 16, Flyway Migrations |
-| **Messaging & Cloud** | AWS EventBridge, Amazon SQS & DLQ, AWS SDK for Java v2 (`2.29.50`) |
+| **Messaging & Cloud** | AWS EventBridge, Amazon SQS & DLQ, Amazon S3, AWS SDK for Java v2 |
 | **Frontend** | React 19, TypeScript, Vite, Tailwind CSS v3.4, React Router v7, Lucide Icons, Axios |
-| **DevOps & Containers** | Docker, Docker Compose, Nginx |
+| **Containerization** | Docker, Docker Compose, Nginx |
 | **Testing** | JUnit 5, Testcontainers (PostgreSQL 16), Mockito |
-
----
-
-## Amazon SDE Candidate Alignment
-
-This project is architected specifically to demonstrate competencies required for Amazon Software Development Engineer (SDE) roles:
-
-| Amazon Principle / Practice | Implementation in KalaSetu (FulfillX) |
-|---|---|
-| **Core Language Alignment** | Over 80% of Amazon backend services run on **Java**. Using Java 17 + Spring Boot shows enterprise object-oriented engineering skills. |
-| **Customer Obsession & Consistency** | **Pessimistic Row Locking (`SELECT ... FOR UPDATE`)** prevents stock overselling during flash-sale checkouts. **Double-sided idempotency** eliminates double charges. |
-| **Invent & Simplify** | **Transactional Outbox Pattern** ensures reliable domain event publishing to AWS EventBridge without complex two-phase commits (2PC). |
-| **Amazon Karigar Alignment** | Directly mirrors Amazon's initiative empowering 2,500+ rural Indian artisans (Channapatna toys, Banarasi silk, Dhokra bronze) with pan-India fulfillment. |
-| **Event-Driven Asynchronous Pipeline** | AWS EventBridge decouples order payments from the Amazon SQS fulfillment queue, complete with dead-letter queue (DLQ) retry semantics. |
-| **Operational Excellence** | Production observability with custom Micrometer business metrics (`fulfillx.*`), Actuator health checks, and correlation ID (MDC) tracing. |
 
 ---
 
 ## Project Structure
 
 ```text
-fulfillx/
-├── compose.yaml                    # Multi-container local production orchestration
-├── .env.example                    # Sample root environment configuration
+KarigarSetu/
+├── compose.yaml                    # Multi-container Docker Compose configuration
+├── .env.example                    # Sample environment variables
 ├── backend/
 │   ├── pom.xml                     # Maven dependencies (Spring Boot, AWS SDK, Flyway)
-│   ├── Dockerfile                  # Multi-stage Eclipse Temurin JRE build
+│   ├── Dockerfile                  # Multi-stage Eclipse Temurin build
 │   └── src/
 │       ├── main/
 │       │   ├── java/com/fulfillx/backend/
-│       │   │   ├── config/         # Security, AWS, OpenAPI, Metrics, CORS, MDC Tracing
+│       │   │   ├── config/         # Security, AWS, OpenAPI, Metrics, CORS, Tracing
 │       │   │   ├── controller/     # Auth, Cart, Order, Product, User, Health REST APIs
-│       │   │   ├── dto/            # Request / Response DTOs
+│       │   │   ├── dto/            # Request and response DTOs
 │       │   │   ├── entity/         # JPA Entities (Order, Cart, Product, OutboxEvent, etc.)
 │       │   │   ├── event/          # SQS Consumer, EventBridge Publisher, Domain Events
 │       │   │   ├── repository/     # Spring Data JPA Repositories
-│       │   │   └── service/        # Business logic (Order, Inventory, Outbox, Payment, Auth)
+│       │   │   └── service/        # Order, Inventory, Outbox, Payment, Auth services
 │       │   └── resources/
 │       │       ├── application.properties
-│       │       └── db/migration/   # Flyway SQL migrations (V1 to V11)
-│       └── test/                   # Testcontainers integration test suite
+│       │       └── db/migration/   # Flyway SQL migrations (V1 to V12)
+│       └── test/                   # Testcontainers integration tests
 └── frontend/
-    ├── package.json                # React 19, Vite, TypeScript, Tailwind CSS, Axios
-    ├── tailwind.config.js          # Artisanal color palette and typography
+    ├── package.json                # React 19, Vite, TypeScript, Tailwind CSS
     ├── Dockerfile                  # Multi-stage build with Nginx reverse proxy
-    ├── nginx.conf                  # Nginx SPA fallback configuration
     └── src/
-        ├── api/                    # Axios API client & endpoint definitions
-        ├── components/             # Reusable UI components (ProductCard, FulfillmentStatus, etc.)
+        ├── api/                    # Axios API client and endpoints
+        ├── components/             # Reusable UI components
         ├── context/                # AuthContext & CartContext
-        ├── pages/                  # HomePage, Products, Cart, Orders, Admin Dashboard
+        ├── pages/                  # Home, Products, Cart, Orders, Admin Dashboard
         └── routes/                 # Protected and Admin route guards
 ```
 
@@ -171,21 +148,22 @@ fulfillx/
 
 ## Database Migrations (Flyway)
 
-Database schema evolution is managed via versioned Flyway migrations under `backend/src/main/resources/db/migration/`:
+Migrations are located in `backend/src/main/resources/db/migration/`:
 
-| Version | Migration Script | Description |
+| Version | File | Description |
 |---|---|---|
 | **V1** | `V1__create_products_table.sql` | Products table with SKU, category, stock checks, and indexes |
 | **V2** | `V2__create_users_table.sql` | Users table with roles (`CUSTOMER`, `ADMIN`) and hashed passwords |
 | **V3** | `V3__create_cart_and_order_tables.sql` | Carts, Cart Items, Orders, and Order Items tables |
 | **V4** | `V4__create_inventory_reservations.sql` | Inventory reservations tracking allocations per order |
 | **V5** | `V5__create_idempotency_keys.sql` | Client checkout idempotency keys table |
-| **V6** | `V6__create_payments_table.sql` | Order payment status and transaction references |
+| **V6** | `V6__create_payments_table.sql` | Order payment records and transaction references |
 | **V7** | `V7__create_fulfillment_table.sql` | Fulfillment records with status (`PENDING`, `PROCESSING`, `SHIPPED`) |
 | **V8** | `V8__create_outbox_events_table.sql` | Transactional outbox event store (`PENDING`, `PUBLISHED`, `FAILED`) |
 | **V9** | `V9__create_processed_events_table.sql` | SQS consumer event deduplication table |
-| **V10** | `V10__add_artisan_and_handcraft_fields.sql` | Adds artisan name, origin town, origin state, craft type, and tracking fields |
-| **V11** | `V11__seed_artisan_handcrafted_products.sql` | Seeds initial collection of authentic Indian artisanal handcrafted products |
+| **V10** | `V10__add_artisan_and_handcraft_fields.sql` | Adds artisan name, origin town, state, and craft type |
+| **V11** | `V11__seed_artisan_handcrafted_products.sql` | Seeds initial artisan product catalog |
+| **V12** | `V12__seed_curated_pan_india_handicrafts.sql` | Seeds curated Pan-India handicrafts collection |
 
 ---
 
@@ -199,9 +177,10 @@ Database schema evolution is managed via versioned Flyway migrations under `back
 - `GET /api/v1/products?category={cat}&page=0&size=20` — List active products (Public).
 - `POST /api/v1/products` — Create a product (*Admin only*).
 - `PUT /api/v1/products/{id}/stock?quantity={qty}` — Update inventory quantity (*Admin only*).
+- `POST /api/v1/products/upload-url` — Generate S3 upload metadata for product image (*Admin only*).
 
 ### Shopping Cart (Authenticated)
-- `GET /api/v1/cart` — View current user's cart.
+- `GET /api/v1/cart` — Get current user's cart.
 - `POST /api/v1/cart/items` — Add product to cart.
 - `PUT /api/v1/cart/items/{itemId}` — Update item quantity in cart.
 - `DELETE /api/v1/cart/items/{itemId}` — Remove item from cart.
@@ -213,7 +192,8 @@ Database schema evolution is managed via versioned Flyway migrations under `back
 
 ### User & System
 - `GET /api/v1/users/me` — Get profile and role of authenticated user.
-- `GET /actuator/health` — Health check endpoint (Liveness & Readiness).
+- `GET /api/v1/health` — Basic backend health check.
+- `GET /actuator/health` — Spring Boot Actuator health (Liveness & Readiness).
 - `GET /actuator/prometheus` — Prometheus scraping metrics.
 - `GET /swagger-ui.html` — Interactive Swagger UI documentation.
 
@@ -222,32 +202,26 @@ Database schema evolution is managed via versioned Flyway migrations under `back
 ## Getting Started
 
 ### Prerequisites
-- [Docker](https://www.docker.com/) and Docker Compose
-- [Java 17+](https://adoptium.net/) (for local backend development)
-- [Node.js 18+](https://nodejs.org/) & `npm` (for local frontend development)
+- [Docker](https://www.docker.com/) and Docker Compose (Docker Desktop must be running)
+- [Java 17+](https://adoptium.net/) (for local backend development without Docker)
+- [Node.js 18+](https://nodejs.org/) & `npm` (for local frontend development without Docker)
 
 ---
 
-### Option 1: Run with Docker Compose (Recommended)
+### Option 1: Run with Docker Compose
 
-1. **Clone the repository and copy environment variables:**
+1. **Copy the environment configuration:**
    ```bash
    cp .env.example .env
    ```
-   Configure your `.env` values (generate a secure `JWT_SECRET`, specify AWS credentials/region if connecting to real AWS infrastructure):
-   ```ini
-   JWT_SECRET=your_base64_or_hex_secret_key_minimum_256_bits
-   AWS_REGION=ap-south-1
-   AWS_EVENTBRIDGE_BUS=default
-   AWS_SQS_QUEUE_URL=https://sqs.us-east-1.amazonaws.com/123456789012/fulfillx-fulfillment-queue
-   ```
+   Set `JWT_SECRET` in `.env` (and your AWS settings if connecting to live AWS resources).
 
 2. **Start all services:**
    ```bash
    docker compose up --build
    ```
 
-3. **Access the application:**
+3. **Access points:**
    - **Frontend:** [http://localhost:5173](http://localhost:5173)
    - **Backend API:** [http://localhost:8080/api/v1](http://localhost:8080/api/v1)
    - **Swagger UI:** [http://localhost:8080/swagger-ui.html](http://localhost:8080/swagger-ui.html)
@@ -256,19 +230,19 @@ Database schema evolution is managed via versioned Flyway migrations under `back
 
 ---
 
-### Option 2: Running Components Individually
+### Option 2: Run Locally (Individual Services)
 
 #### 1. Start PostgreSQL
 ```bash
-docker run -d --name fulfillx-postgres \
-  -e POSTGRES_DB=fulfillx \
-  -e POSTGRES_USER=fulfillx \
-  -e POSTGRES_PASSWORD=fulfillx_dev_password \
+docker run -d --name karigarsetu-postgres \
+  -e POSTGRES_DB=karigarsetu \
+  -e POSTGRES_USER=karigarsetu \
+  -e POSTGRES_PASSWORD=karigarsetu_dev_password \
   -p 5432:5432 \
   postgres:16
 ```
 
-#### 2. Run Spring Boot Backend
+#### 2. Run Backend
 ```bash
 cd backend
 
@@ -279,7 +253,7 @@ cd backend
 ./mvnw.cmd spring-boot:run
 ```
 
-#### 3. Run React Frontend
+#### 3. Run Frontend
 ```bash
 cd frontend
 npm install
@@ -289,9 +263,9 @@ The frontend dev server will launch at [http://localhost:5173](http://localhost:
 
 ---
 
-## Running Tests
+## Testing
 
-Integration tests use **Testcontainers** to spin up an isolated PostgreSQL 16 container for end-to-end repository, service, and outbox validation:
+Backend integration tests use **Testcontainers** with an isolated PostgreSQL 16 container:
 
 ```bash
 cd backend
@@ -302,4 +276,4 @@ cd backend
 
 ## License
 
-This project is licensed under the MIT License.
+MIT

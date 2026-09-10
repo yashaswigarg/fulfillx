@@ -51,7 +51,6 @@ function ProductsPage() {
         setError("");
 
         try {
-            // Load up to 50 items so category and search filtering feel instantaneous
             const response = await getProducts(page, 50, category || undefined);
             setProducts(response.content);
             setTotalPages(response.totalPages);
@@ -126,7 +125,6 @@ function ProductsPage() {
         setPage(0);
     }
 
-    // Real-time client search filtering across multiple artisan attributes and regional zones
     const filteredProducts = products.filter((product) => {
         if (region === "north") {
             const state = (product.originState || "").toLowerCase();
@@ -157,7 +155,6 @@ function ProductsPage() {
 
     return (
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8">
-            {/* Toast Notification */}
             {toastMessage && (
                 <div
                     className={`fixed bottom-6 right-6 z-50 px-5 py-3.5 rounded-2xl shadow-xl border flex items-center gap-3 transition-all animate-slide-up ${
@@ -175,7 +172,6 @@ function ProductsPage() {
                 </div>
             )}
 
-            {/* Header Title Banner */}
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 pb-6 border-b border-stone-200">
                 <div>
                     <div className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-artisan-700 mb-1">
@@ -195,7 +191,6 @@ function ProductsPage() {
                 </div>
             </div>
 
-            {/* Search Bar & Active Search Tag */}
             <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4">
                 <form onSubmit={handleSearchSubmit} className="relative flex-1 max-w-lg">
                     <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-stone-400" />
@@ -231,7 +226,6 @@ function ProductsPage() {
                 )}
             </div>
 
-            {/* Regional Zone Filter Pills */}
             <div className="space-y-3 pt-2">
                 <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
                     <span className="text-xs font-semibold text-stone-400 uppercase tracking-wider shrink-0 mr-1 flex items-center gap-1">
@@ -256,7 +250,6 @@ function ProductsPage() {
                     })}
                 </div>
 
-                {/* Craft Category Filter Pills */}
                 <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
                     <span className="text-xs font-semibold text-stone-400 uppercase tracking-wider shrink-0 mr-1 flex items-center gap-1">
                         <Layers className="w-3.5 h-3.5" />
@@ -281,7 +274,6 @@ function ProductsPage() {
                 </div>
             </div>
 
-            {/* Content States */}
             {loading ? (
                 <div className="py-24 text-center space-y-3">
                     <div className="w-10 h-10 border-3 border-artisan-600 border-t-transparent rounded-full animate-spin mx-auto" />
@@ -339,7 +331,6 @@ function ProductsPage() {
                 </div>
             )}
 
-            {/* Pagination Controls */}
             {!loading && totalPages > 1 && !searchQuery && !region && (
                 <div className="pt-8 border-t border-stone-200 flex items-center justify-between">
                     <button

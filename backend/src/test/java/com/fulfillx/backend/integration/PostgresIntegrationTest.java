@@ -12,9 +12,9 @@ public abstract class PostgresIntegrationTest {
 
     static {
         postgres = new PostgreSQLContainer<>("postgres:16")
-                .withDatabaseName("fulfillx_test")
-                .withUsername("fulfillx")
-                .withPassword("fulfillx_test_password")
+                .withDatabaseName("karigarsetu_test")
+                .withUsername("karigarsetu")
+                .withPassword("karigarsetu_test_password")
                 .withEnv("TZ", "UTC");
         postgres.start();
     }

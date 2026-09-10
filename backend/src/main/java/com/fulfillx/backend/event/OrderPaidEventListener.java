@@ -12,11 +12,5 @@ public class OrderPaidEventListener {
         System.out.println(
                 "OrderPaidEvent received: orderId="
                         + event.orderId());
-
-        // Future consumers:
-        //
-        // 1. Inventory
-        // 2. Fulfillment
-        // 3. Notification
     }
 }

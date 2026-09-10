@@ -32,7 +32,6 @@ function LoginPage() {
     return (
         <div className="min-h-[calc(100vh-250px)] flex items-center justify-center px-4 py-12">
             <div className="w-full max-w-md bg-white rounded-3xl border border-stone-200 p-8 sm:p-10 shadow-xl space-y-7">
-                {/* Header */}
                 <div className="text-center space-y-2">
                     <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-artisan-600 to-amber-600 text-white flex items-center justify-center mx-auto shadow-md shadow-artisan-600/20">
                         <Sparkles className="w-6 h-6" />
@@ -45,7 +44,6 @@ function LoginPage() {
                     </p>
                 </div>
 
-                {/* Error Banner */}
                 {error && (
                     <div className="p-3.5 rounded-xl bg-red-50 border border-red-200 text-red-700 text-xs font-medium flex items-center gap-2">
                         <AlertCircle className="w-4 h-4 shrink-0" />
@@ -53,7 +51,6 @@ function LoginPage() {
                     </div>
                 )}
 
-                {/* Form */}
                 <form onSubmit={handleSubmit} className="space-y-4">
                     <div className="space-y-1.5">
                         <label className="text-xs font-semibold text-stone-700" htmlFor="email">
@@ -110,7 +107,6 @@ function LoginPage() {
                     </button>
                 </form>
 
-                {/* Footer Switch */}
                 <div className="pt-4 border-t border-stone-100 text-center text-xs text-stone-500">
                     <span>Don't have an account? </span>
                     <Link to="/register" className="font-bold text-artisan-700 hover:underline">

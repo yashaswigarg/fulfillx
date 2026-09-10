@@ -87,7 +87,6 @@ function CartPage() {
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
-                {/* Cart Items List (2 cols on large) */}
                 <div className="lg:col-span-2 space-y-4">
                     {cart.items.map((item) => (
                         <article
@@ -112,9 +111,7 @@ function CartPage() {
                                 </p>
                             </div>
 
-                            {/* Quantity & Subtotal Controls */}
                             <div className="flex items-center gap-6 w-full sm:w-auto justify-between sm:justify-end pt-3 sm:pt-0 border-t sm:border-t-0 border-stone-100">
-                                {/* Counter */}
                                 <div className="flex items-center border border-stone-200 rounded-xl bg-stone-50 overflow-hidden shadow-2xs">
                                     <button
                                         disabled={item.quantity <= 1}
@@ -136,7 +133,6 @@ function CartPage() {
                                     </button>
                                 </div>
 
-                                {/* Subtotal */}
                                 <div className="text-right min-w-[90px]">
                                     <div className="text-[11px] text-stone-400 font-medium">Subtotal</div>
                                     <div className="font-serif text-lg font-bold text-stone-900">
@@ -144,7 +140,6 @@ function CartPage() {
                                     </div>
                                 </div>
 
-                                {/* Remove Button */}
                                 <button
                                     onClick={() => removeItem(item.id)}
                                     className="p-2 text-stone-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
@@ -164,13 +159,11 @@ function CartPage() {
                     </div>
                 </div>
 
-                {/* Right Column: Order Summary Card */}
                 <div className="bg-white rounded-2xl border border-stone-200 p-6 shadow-xs space-y-6">
                     <h2 className="font-serif font-bold text-xl text-stone-900 pb-3 border-b border-stone-100">
                         Order Summary
                     </h2>
 
-                    {/* Delivery Pincode Checker */}
                     <div className="space-y-1.5">
                         <label className="text-xs font-semibold text-stone-700 flex items-center gap-1">
                             <MapPin className="w-3.5 h-3.5 text-artisan-600" />
@@ -199,7 +192,6 @@ function CartPage() {
                         )}
                     </div>
 
-                    {/* Price Breakdown */}
                     <div className="space-y-3 pt-3 border-t border-stone-100 text-xs text-stone-600">
                         <div className="flex justify-between">
                             <span>Artisanal Items Subtotal</span>
@@ -223,7 +215,6 @@ function CartPage() {
                         </div>
                     </div>
 
-                    {/* Checkout Button */}
                     <CheckoutButton />
                 </div>
             </div>

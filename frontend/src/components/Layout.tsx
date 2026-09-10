@@ -28,17 +28,14 @@ function Layout() {
 
     return (
         <div className="min-h-screen flex flex-col bg-stone-50 text-stone-900 font-sans">
-            {/* Top Announcement Bar */}
             <div className="bg-gradient-to-r from-artisan-800 via-artisan-700 to-amber-800 text-amber-50 text-xs py-2 px-4 text-center font-medium tracking-wide flex items-center justify-center gap-2">
                 <Sparkles className="w-3.5 h-3.5 text-amber-300" />
                 <span>Empowering Rural Artisans & Craft Collectives • 100% Authentic Handcrafted Treasures • Direct-to-Artisan Fair Payouts</span>
             </div>
 
-            {/* Main Navigation */}
             <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-stone-200/80 shadow-xs">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="flex items-center justify-between h-20 gap-4">
-                        {/* Logo */}
                         <Link to="/" className="flex items-center gap-3 group shrink-0">
                             <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-artisan-600 to-amber-600 flex items-center justify-center text-white shadow-md shadow-artisan-600/20 group-hover:scale-105 transition-transform duration-200">
                                 <Sparkles className="w-6 h-6" />
@@ -53,7 +50,6 @@ function Layout() {
                             </div>
                         </Link>
 
-                        {/* Search Bar */}
                         <form onSubmit={handleSearchSubmit} className="hidden md:flex items-center flex-1 max-w-md mx-6">
                             <div className="relative w-full">
                                 <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-stone-400" />
@@ -67,7 +63,6 @@ function Layout() {
                             </div>
                         </form>
 
-                        {/* Navigation Links */}
                         <nav className="flex items-center gap-1 sm:gap-2">
                             <Link
                                 to="/products"
@@ -105,7 +100,6 @@ function Layout() {
                                 </Link>
                             )}
 
-                            {/* Cart Icon */}
                             <Link
                                 to="/cart"
                                 className="relative p-2.5 rounded-full text-stone-700 hover:text-artisan-700 hover:bg-stone-100 transition-colors ml-1"
@@ -119,7 +113,6 @@ function Layout() {
                                 )}
                             </Link>
 
-                            {/* Auth Controls */}
                             <div className="h-6 w-px bg-stone-200 mx-1 sm:mx-2" />
 
                             {isAuthenticated ? (
@@ -152,16 +145,13 @@ function Layout() {
                 </div>
             </header>
 
-            {/* Main Content Viewport */}
             <main className="flex-1">
                 <Outlet />
             </main>
 
-            {/* Footer */}
             <footer className="bg-stone-900 text-stone-300 border-t border-stone-800 mt-20">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
                     <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-12">
-                        {/* Brand Column */}
                         <div className="md:col-span-1 space-y-3">
                             <div className="flex items-center gap-2.5">
                                 <div className="w-9 h-9 rounded-lg bg-artisan-600 flex items-center justify-center text-white font-bold">
@@ -178,7 +168,6 @@ function Layout() {
                             </div>
                         </div>
 
-                        {/* Craft Clusters */}
                         <div>
                             <h4 className="text-xs font-semibold uppercase tracking-wider text-amber-400 mb-3">
                                 Craft Clusters
@@ -192,7 +181,6 @@ function Layout() {
                             </ul>
                         </div>
 
-                        {/* Distributed Engineering Architecture */}
                         <div>
                             <h4 className="text-xs font-semibold uppercase tracking-wider text-amber-400 mb-3">
                                 System Architecture
@@ -206,7 +194,6 @@ function Layout() {
                             </ul>
                         </div>
 
-                        {/* Fulfillment & Reliability */}
                         <div>
                             <h4 className="text-xs font-semibold uppercase tracking-wider text-amber-400 mb-3">
                                 Fulfillment & Reliability

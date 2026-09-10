@@ -90,7 +90,6 @@ function FulfillmentStatus({ status, trackingNumber, originHub }: FulfillmentSta
 
                             return (
                                 <div key={step.key} className="relative flex md:flex-col items-start gap-3 md:gap-2">
-                                    {/* Indicator Dot */}
                                     <div className="flex items-center">
                                         <div
                                             className={`w-9 h-9 rounded-full flex items-center justify-center shrink-0 transition-all duration-300 ${
@@ -109,7 +108,6 @@ function FulfillmentStatus({ status, trackingNumber, originHub }: FulfillmentSta
                                         </div>
                                     </div>
 
-                                    {/* Text Info */}
                                     <div className="space-y-0.5">
                                         <div className="flex items-center gap-1.5">
                                             <span

@@ -39,21 +39,17 @@ export default function HomePage() {
 
     return (
         <div className="space-y-20 pb-16">
-            {/* Hero Section */}
             <section className="relative overflow-hidden bg-gradient-to-b from-amber-100/60 via-amber-50/40 to-stone-50 pt-16 pb-24 border-b border-amber-200/50">
-                {/* Decorative glow */}
                 <div className="absolute top-0 right-1/4 w-96 h-96 bg-artisan-400/10 rounded-full blur-3xl pointer-events-none" />
                 <div className="absolute bottom-0 left-1/4 w-96 h-96 bg-amber-400/15 rounded-full blur-3xl pointer-events-none" />
 
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
                     <div className="max-w-3xl mx-auto text-center space-y-6">
-                        {/* Tag pill */}
                         <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/90 border border-artisan-200 text-artisan-800 text-xs font-semibold shadow-xs">
                             <Sparkles className="w-3.5 h-3.5 text-amber-500" />
                             <span>Direct from Verified Rural Artisans & Tribal Guilds</span>
                         </div>
 
-                        {/* Heading */}
                         <h1 className="font-serif text-4xl sm:text-5xl lg:text-6xl font-extrabold text-stone-900 tracking-tight leading-[1.15]">
                             Authentic Indian Crafts,{" "}
                             <span className="text-transparent bg-clip-text bg-gradient-to-r from-artisan-700 via-amber-700 to-artisan-800">
@@ -62,12 +58,10 @@ export default function HomePage() {
                             to Your Home
                         </h1>
 
-                        {/* Subtext */}
                         <p className="text-stone-600 text-base sm:text-lg leading-relaxed max-w-2xl mx-auto">
                             Eliminating middlemen to empower generational craftspeople from Punjab, Kashmir, Rajasthan, Karnataka, Bihar, Assam, and Gujarat with direct fair-price access.
                         </p>
 
-                        {/* CTA buttons */}
                         <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-4">
                             <Link
                                 to="/products"
@@ -86,7 +80,6 @@ export default function HomePage() {
                             </Link>
                         </div>
 
-                        {/* Metric stats */}
                         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 pt-12 border-t border-amber-200/60 max-w-3xl mx-auto">
                             <div className="p-3 bg-white/60 backdrop-blur-xs rounded-xl border border-stone-200/60">
                                 <div className="font-serif text-2xl font-bold text-stone-900">Direct</div>
@@ -109,7 +102,6 @@ export default function HomePage() {
                 </div>
             </section>
 
-            {/* Featured Craft Clusters */}
             <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-10">
                     <div>
@@ -166,7 +158,6 @@ export default function HomePage() {
                 </div>
             </section>
 
-            {/* Why KarigarSetu - Enterprise Architecture & Reliability Pillars */}
             <section className="bg-amber-50/50 py-16 border-y border-amber-200/40">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="text-center max-w-2xl mx-auto mb-12">
