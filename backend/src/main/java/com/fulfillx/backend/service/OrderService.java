@@ -235,10 +235,19 @@ public class OrderService {
                                                 item.getSubtotal()))
                                 .toList();
 
-                String fulfillmentStatus = fulfillmentRepository
-                                .findByOrderId(order.getId())
+                var fulfillmentOpt = fulfillmentRepository.findByOrderId(order.getId());
+                String fulfillmentStatus = fulfillmentOpt
                                 .map(f -> f.getStatus().name())
                                 .orElse(null);
+                String trackingNumber = fulfillmentOpt
+                                .map(f -> f.getTrackingNumber())
+                                .orElse("KALA-TRK-" + order.getId() + "90");
+                String currentStage = fulfillmentOpt
+                                .map(f -> f.getCurrentStage())
+                                .orElse("ORDER_VERIFIED");
+                String originHub = fulfillmentOpt
+                                .map(f -> f.getOriginHub())
+                                .orElse("Regional Artisan Hub");
 
                 return new OrderResponse(
                                 order.getId(),
@@ -246,6 +255,9 @@ public class OrderService {
                                 order.getTotalAmount(),
                                 items,
                                 fulfillmentStatus,
+                                trackingNumber,
+                                currentStage,
+                                originHub,
                                 order.getCreatedAt(),
                                 order.getUpdatedAt());
         }

@@ -7,6 +7,12 @@ export interface Product {
     category: string;
     stockQuantity: number;
     active: boolean;
+    artisanName?: string;
+    originTown?: string;
+    originState?: string;
+    craftType?: string;
+    imageUrl?: string;
+    rating?: number;
     createdAt: string;
     updatedAt: string;
 }
@@ -33,12 +39,17 @@ export interface CartItem {
     unitPrice: number;
     quantity: number;
     subtotal: number;
+    imageUrl?: string;
+    originTown?: string;
+    artisanName?: string;
 }
 
 export interface Cart {
-    id: number;
+    id?: number;
+    cartId?: number;
     items: CartItem[];
-    totalAmount: number;
+    total?: number;
+    totalAmount?: number;
 }
 
 export interface AuthResponse {
@@ -65,6 +76,9 @@ export interface Order {
     totalAmount: number;
     items: OrderItem[];
     fulfillmentStatus?: string;
+    trackingNumber?: string;
+    currentStage?: string;
+    originHub?: string;
     createdAt: string;
     updatedAt: string;
 }

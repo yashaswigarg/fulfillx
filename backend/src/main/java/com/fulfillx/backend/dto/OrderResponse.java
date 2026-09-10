@@ -5,11 +5,14 @@ import java.time.OffsetDateTime;
 import java.util.List;
 
 public record OrderResponse(
-                Long id,
-                String status,
-                BigDecimal totalAmount,
-                List<OrderItemResponse> items,
-                String fulfillmentStatus,
-                OffsetDateTime createdAt,
-                OffsetDateTime updatedAt) {
+        Long id,
+        String status,
+        BigDecimal totalAmount,
+        List<OrderItemResponse> items,
+        String fulfillmentStatus,
+        String trackingNumber,
+        String currentStage,
+        String originHub,
+        OffsetDateTime createdAt,
+        OffsetDateTime updatedAt) {
 }

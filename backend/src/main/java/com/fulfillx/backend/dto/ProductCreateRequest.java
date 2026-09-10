@@ -20,5 +20,17 @@ public record ProductCreateRequest(
 
         @NotBlank(message = "Category is required") @Size(max = 100, message = "Category must not exceed 100 characters") String category,
 
-        @NotNull(message = "Stock quantity is required") @Min(value = 0, message = "Stock quantity cannot be negative") Integer stockQuantity) {
+        @NotNull(message = "Stock quantity is required") @Min(value = 0, message = "Stock quantity cannot be negative") Integer stockQuantity,
+
+        String artisanName,
+
+        String originTown,
+
+        String originState,
+
+        String craftType,
+
+        String imageUrl,
+
+        BigDecimal rating) {
 }

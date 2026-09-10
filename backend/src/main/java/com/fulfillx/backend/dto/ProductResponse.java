@@ -12,6 +12,12 @@ public record ProductResponse(
         String category,
         Integer stockQuantity,
         Boolean active,
+        String artisanName,
+        String originTown,
+        String originState,
+        String craftType,
+        String imageUrl,
+        BigDecimal rating,
         OffsetDateTime createdAt,
         OffsetDateTime updatedAt) {
 }

@@ -6,7 +6,9 @@ import type {
 
 export async function checkout(): Promise<Order> {
     const idempotencyKey =
-        crypto.randomUUID();
+        typeof crypto !== "undefined" && typeof crypto.randomUUID === "function"
+            ? crypto.randomUUID()
+            : `idemp-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
 
     const response =
         await apiClient.post<Order>(

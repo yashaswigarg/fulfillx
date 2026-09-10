@@ -109,10 +109,25 @@ Stateless authentication using Spring Security and HMAC-SHA256 JWT tokens:
 |---|---|
 | **Backend** | Java 17, Spring Boot 4.1.1, Spring Data JPA, Spring Security, Springdoc OpenAPI (Swagger) |
 | **Database** | PostgreSQL 16, Flyway Migrations |
-| **Messaging & Cloud** | AWS EventBridge, Amazon SQS, AWS SDK for Java v2 (`2.29.50`) |
-| **Frontend** | React 19, TypeScript, Vite, React Router v7, Axios, Modern Vanilla CSS |
+| **Messaging & Cloud** | AWS EventBridge, Amazon SQS & DLQ, AWS SDK for Java v2 (`2.29.50`) |
+| **Frontend** | React 19, TypeScript, Vite, Tailwind CSS v3.4, React Router v7, Lucide Icons, Axios |
 | **DevOps & Containers** | Docker, Docker Compose, Nginx |
 | **Testing** | JUnit 5, Testcontainers (PostgreSQL 16), Mockito |
+
+---
+
+## Amazon SDE Candidate Alignment
+
+This project is architected specifically to demonstrate competencies required for Amazon Software Development Engineer (SDE) roles:
+
+| Amazon Principle / Practice | Implementation in KalaSetu (FulfillX) |
+|---|---|
+| **Core Language Alignment** | Over 80% of Amazon backend services run on **Java**. Using Java 17 + Spring Boot shows enterprise object-oriented engineering skills. |
+| **Customer Obsession & Consistency** | **Pessimistic Row Locking (`SELECT ... FOR UPDATE`)** prevents stock overselling during flash-sale checkouts. **Double-sided idempotency** eliminates double charges. |
+| **Invent & Simplify** | **Transactional Outbox Pattern** ensures reliable domain event publishing to AWS EventBridge without complex two-phase commits (2PC). |
+| **Amazon Karigar Alignment** | Directly mirrors Amazon's initiative empowering 2,500+ rural Indian artisans (Channapatna toys, Banarasi silk, Dhokra bronze) with pan-India fulfillment. |
+| **Event-Driven Asynchronous Pipeline** | AWS EventBridge decouples order payments from the Amazon SQS fulfillment queue, complete with dead-letter queue (DLQ) retry semantics. |
+| **Operational Excellence** | Production observability with custom Micrometer business metrics (`fulfillx.*`), Actuator health checks, and correlation ID (MDC) tracing. |
 
 ---
 
@@ -137,17 +152,18 @@ fulfillx/
 │       │   │   └── service/        # Business logic (Order, Inventory, Outbox, Payment, Auth)
 │       │   └── resources/
 │       │       ├── application.properties
-│       │       └── db/migration/   # Flyway SQL migrations (V1 to V9)
+│       │       └── db/migration/   # Flyway SQL migrations (V1 to V11)
 │       └── test/                   # Testcontainers integration test suite
 └── frontend/
-    ├── package.json                # React 19, Vite, TypeScript, Axios, React Router 7
+    ├── package.json                # React 19, Vite, TypeScript, Tailwind CSS, Axios
+    ├── tailwind.config.js          # Artisanal color palette and typography
     ├── Dockerfile                  # Multi-stage build with Nginx reverse proxy
     ├── nginx.conf                  # Nginx SPA fallback configuration
     └── src/
         ├── api/                    # Axios API client & endpoint definitions
-        ├── components/             # Reusable UI components (Layout, ProductCard, etc.)
-        ├── context/                # AuthContext for JWT state management
-        ├── pages/                  # Products, Cart, Orders, Admin Dashboard, Login/Register
+        ├── components/             # Reusable UI components (ProductCard, FulfillmentStatus, etc.)
+        ├── context/                # AuthContext & CartContext
+        ├── pages/                  # HomePage, Products, Cart, Orders, Admin Dashboard
         └── routes/                 # Protected and Admin route guards
 ```
 
@@ -168,6 +184,8 @@ Database schema evolution is managed via versioned Flyway migrations under `back
 | **V7** | `V7__create_fulfillment_table.sql` | Fulfillment records with status (`PENDING`, `PROCESSING`, `SHIPPED`) |
 | **V8** | `V8__create_outbox_events_table.sql` | Transactional outbox event store (`PENDING`, `PUBLISHED`, `FAILED`) |
 | **V9** | `V9__create_processed_events_table.sql` | SQS consumer event deduplication table |
+| **V10** | `V10__add_artisan_and_handcraft_fields.sql` | Adds artisan name, origin town, origin state, craft type, and tracking fields |
+| **V11** | `V11__seed_artisan_handcrafted_products.sql` | Seeds initial collection of authentic Indian artisanal handcrafted products |
 
 ---
 

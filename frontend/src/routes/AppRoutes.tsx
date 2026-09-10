@@ -14,18 +14,8 @@ import OrderDetailPage from "../pages/OrderDetailPage";
 import OrdersPage from "../pages/OrdersPage";
 import AdminDashboardPage from "../pages/AdminDashboardPage";
 import Layout from "../components/Layout";
+import HomePage from "../pages/HomePage";
 import { useAuth } from "../context/AuthContext";
-
-function HomePage() {
-    return (
-        <div>
-            <h1>FulfillX</h1>
-            <p>
-                Ecommerce and fulfillment platform
-            </p>
-        </div>
-    );
-}
 
 function AppRoutes() {
     const { role } = useAuth();
@@ -54,12 +44,12 @@ function AppRoutes() {
                     element={<ProductsPage />}
                 />
 
-                <Route element={<ProtectedRoute />}>
+                <Route
+                    path="/cart"
+                    element={<CartPage />}
+                />
 
-                    <Route
-                        path="/cart"
-                        element={<CartPage />}
-                    />
+                <Route element={<ProtectedRoute />}>
 
                     <Route
                         path="/orders"

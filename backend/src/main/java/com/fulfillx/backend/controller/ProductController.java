@@ -18,9 +18,13 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 public class ProductController {
 
     private final ProductService productService;
+    private final com.fulfillx.backend.service.ImageStorageService imageStorageService;
 
-    public ProductController(ProductService productService) {
+    public ProductController(
+            ProductService productService,
+            com.fulfillx.backend.service.ImageStorageService imageStorageService) {
         this.productService = productService;
+        this.imageStorageService = imageStorageService;
     }
 
     @Operation(summary = "List products", description = "Returns paginated active products.")
@@ -44,11 +48,19 @@ public class ProductController {
     }
 
     @Operation(summary = "Create product", description = "Creates a product. Requires ADMIN role.")
-
     @PostMapping
     public ProductResponse createProduct(
             @Valid @RequestBody ProductCreateRequest request) {
         return productService.createProduct(request);
+    }
+
+    @Operation(summary = "Generate S3 image upload metadata", description = "Generates AWS S3 partition key and URL for artisan craft photos")
+    @PostMapping("/upload-url")
+    @PreAuthorize("hasRole('ADMIN')")
+    public com.fulfillx.backend.service.ImageStorageService.ImageUploadResponse generateUploadUrl(
+            @RequestParam String fileName,
+            @RequestParam(required = false) String category) {
+        return imageStorageService.generateUploadMetadata(fileName, category);
     }
 
     @PutMapping("/{id}/stock")

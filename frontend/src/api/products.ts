@@ -3,6 +3,21 @@ import type {
     Product,
     ProductPage,
 } from "../types/api";
+
+export interface CreateProductInput {
+    name: string;
+    description: string;
+    sku: string;
+    price: number;
+    category: string;
+    stockQuantity: number;
+    artisanName?: string;
+    originTown?: string;
+    originState?: string;
+    craftType?: string;
+    imageUrl?: string;
+}
+
 export async function getProducts(
     page = 0,
     size = 20,
@@ -21,6 +36,17 @@ export async function getProducts(
 
     return response.data;
 }
+
+export async function createProduct(
+    input: CreateProductInput
+): Promise<Product> {
+    const response = await apiClient.post<Product>(
+        "/products",
+        input
+    );
+    return response.data;
+}
+
 export async function updateProductStock(
     productId: number,
     quantity: number

@@ -47,7 +47,13 @@ public class ProductService {
                 request.sku(),
                 request.price(),
                 request.category(),
-                request.stockQuantity());
+                request.stockQuantity(),
+                request.artisanName(),
+                request.originTown(),
+                request.originState(),
+                request.craftType(),
+                request.imageUrl(),
+                request.rating());
 
         Product savedProduct = productRepository.save(product);
 
@@ -64,6 +70,12 @@ public class ProductService {
                 product.getCategory(),
                 product.getStockQuantity(),
                 product.getActive(),
+                product.getArtisanName(),
+                product.getOriginTown(),
+                product.getOriginState(),
+                product.getCraftType(),
+                product.getImageUrl(),
+                product.getRating(),
                 product.getCreatedAt(),
                 product.getUpdatedAt());
     }
