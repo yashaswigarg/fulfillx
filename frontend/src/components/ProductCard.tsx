@@ -7,21 +7,53 @@ interface ProductCardProps {
     adding: boolean;
 }
 
+const CRAFT_IMAGE_MAP: Record<string, string> = {
+    "PB-PHUL-001": "/images/crafts/phulkari.jpg",
+    "RJ-BLP-002": "/images/crafts/blue_pottery.jpg",
+    "JK-PASH-003": "/images/crafts/pashmina.jpg",
+    "KA-INLAY-004": "/images/crafts/mysore_inlay.jpg",
+    "KA-BIDRI-005": "/images/crafts/bidriware.jpg",
+    "BR-MADHU-006": "/images/crafts/madhubani.jpg",
+    "OD-PATTA-007": "/images/crafts/pattachitra.jpg",
+    "AS-BAMB-008": "/images/crafts/bamboo_craft.jpg",
+    "GJ-KUTCH-009": "/images/crafts/kutch_mirrorwork.jpg",
+    "CG-DHOK-010": "/images/crafts/dhokra.jpg",
+    "WB-TERRA-011": "/images/crafts/terracotta.jpg",
+};
+
+function getCraftImage(product: Product): string {
+    if (CRAFT_IMAGE_MAP[product.sku]) {
+        return CRAFT_IMAGE_MAP[product.sku];
+    }
+    const name = (product.name || "").toLowerCase();
+    const craft = (product.craftType || "").toLowerCase();
+    if (name.includes("phulkari") || craft.includes("phulkari")) return "/images/crafts/phulkari.jpg";
+    if (name.includes("blue pottery") || craft.includes("blue pottery")) return "/images/crafts/blue_pottery.jpg";
+    if (name.includes("pashmina") || craft.includes("pashmina")) return "/images/crafts/pashmina.jpg";
+    if (name.includes("inlay") || craft.includes("inlay")) return "/images/crafts/mysore_inlay.jpg";
+    if (name.includes("bidri") || craft.includes("bidri")) return "/images/crafts/bidriware.jpg";
+    if (name.includes("madhubani") || craft.includes("madhubani")) return "/images/crafts/madhubani.jpg";
+    if (name.includes("patta") || craft.includes("patta")) return "/images/crafts/pattachitra.jpg";
+    if (name.includes("bamboo") || craft.includes("bamboo")) return "/images/crafts/bamboo_craft.jpg";
+    if (name.includes("kutch") || craft.includes("mirror")) return "/images/crafts/kutch_mirrorwork.jpg";
+    if (name.includes("dhokra") || craft.includes("dhokra")) return "/images/crafts/dhokra.jpg";
+    if (name.includes("terracotta") || craft.includes("terracotta")) return "/images/crafts/terracotta.jpg";
+
+    return product.imageUrl || "/images/crafts/phulkari.jpg";
+}
+
 function ProductCard({ product, onAddToCart, adding }: ProductCardProps) {
     const outOfStock = product.stockQuantity <= 0;
     const isLowStock = product.stockQuantity > 0 && product.stockQuantity <= 5;
 
-    // Fallback handicraft image based on category
-    const defaultImage =
-        product.imageUrl ||
-        "https://images.unsplash.com/photo-1578749556568-bc2c40e68b61?auto=format&fit=crop&w=800&q=80";
+    const displayImage = getCraftImage(product);
 
     return (
         <article className="group bg-white rounded-2xl border border-stone-200/80 shadow-xs hover:shadow-xl hover:border-artisan-300 transition-all duration-300 flex flex-col overflow-hidden">
             {/* Image & Badges Container */}
             <div className="relative aspect-4/3 overflow-hidden bg-stone-100">
                 <img
-                    src={defaultImage}
+                    src={displayImage}
                     alt={product.name}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                     loading="lazy"

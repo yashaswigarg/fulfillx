@@ -26,7 +26,7 @@ INSERT INTO products (
     'Patiala',
     'Punjab',
     'Phulkari Embroidery',
-    'https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&w=800&q=80',
+    '/images/crafts/phulkari.jpg',
     4.90
 ),
 (
@@ -41,7 +41,7 @@ INSERT INTO products (
     'Jaipur',
     'Rajasthan',
     'Blue Pottery',
-    'https://images.unsplash.com/photo-1578749556568-bc2c40e68b61?auto=format&fit=crop&w=800&q=80',
+    '/images/crafts/blue_pottery.jpg',
     4.85
 ),
 (
@@ -56,7 +56,7 @@ INSERT INTO products (
     'Srinagar',
     'Jammu & Kashmir',
     'Pashmina Shawls',
-    'https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?auto=format&fit=crop&w=800&q=80',
+    '/images/crafts/pashmina.jpg',
     4.95
 ),
 -- Southern India
@@ -72,7 +72,7 @@ INSERT INTO products (
     'Mysore',
     'Karnataka',
     'Mysore Wood Inlay',
-    'https://images.unsplash.com/photo-1544816155-12df9643f363?auto=format&fit=crop&w=800&q=80',
+    '/images/crafts/mysore_inlay.jpg',
     4.88
 ),
 (
@@ -87,7 +87,7 @@ INSERT INTO products (
     'Bidar',
     'Karnataka',
     'Bidriware',
-    'https://images.unsplash.com/photo-1618220179428-22790b461013?auto=format&fit=crop&w=800&q=80',
+    '/images/crafts/bidriware.jpg',
     4.92
 ),
 -- Eastern & North-Eastern India
@@ -103,7 +103,7 @@ INSERT INTO products (
     'Madhubani',
     'Bihar',
     'Madhubani Painting',
-    'https://images.unsplash.com/photo-1579783900882-c0d3dad7b119?auto=format&fit=crop&w=800&q=80',
+    '/images/crafts/madhubani.jpg',
     4.82
 ),
 (
@@ -118,7 +118,7 @@ INSERT INTO products (
     'Raghurajpur',
     'Odisha',
     'Pattachitra',
-    'https://images.unsplash.com/photo-1582562124811-c09040d0a901?auto=format&fit=crop&w=800&q=80',
+    '/images/crafts/pattachitra.jpg',
     4.90
 ),
 (
@@ -133,7 +133,7 @@ INSERT INTO products (
     'Majuli',
     'Assam',
     'Bamboo & Cane Crafts',
-    'https://images.unsplash.com/photo-1590736969955-71cc94801759?auto=format&fit=crop&w=800&q=80',
+    '/images/crafts/bamboo_craft.jpg',
     4.78
 ),
 -- Western & Central India
@@ -149,7 +149,7 @@ INSERT INTO products (
     'Bhuj',
     'Gujarat',
     'Kutch Embroidery & Mirror Work',
-    'https://images.unsplash.com/photo-1584917865442-de89df76afd3?auto=format&fit=crop&w=800&q=80',
+    '/images/crafts/kutch_mirrorwork.jpg',
     4.89
 ),
 (
@@ -164,7 +164,7 @@ INSERT INTO products (
     'Kondagaon',
     'Chhattisgarh',
     'Dhokra Metal Craft',
-    'https://images.unsplash.com/photo-1544717305-2782549b5136?auto=format&fit=crop&w=800&q=80',
+    '/images/crafts/dhokra.jpg',
     4.86
 ),
 (
@@ -179,6 +179,6 @@ INSERT INTO products (
     'Bishnupur',
     'West Bengal',
     'Terracotta',
-    'https://images.unsplash.com/photo-1513519245088-0e12902e5a38?auto=format&fit=crop&w=800&q=80',
+    '/images/crafts/terracotta.jpg',
     4.84
 );

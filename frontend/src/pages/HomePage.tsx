@@ -7,7 +7,7 @@ export default function HomePage() {
             town: "Patiala",
             state: "Punjab (North)",
             craft: "Phulkari Embroidery",
-            image: "https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&w=600&q=80",
+            image: "/images/crafts/phulkari.jpg",
             artisan: "Simranjeet Kaur & Self-Help Collective",
             description: "Colorful, geometric flower embroidery on coarse cotton and chanderi fabric."
         },
@@ -15,7 +15,7 @@ export default function HomePage() {
             town: "Mysore",
             state: "Karnataka (South)",
             craft: "Mysore Wood Inlay",
-            image: "https://images.unsplash.com/photo-1544816155-12df9643f363?auto=format&fit=crop&w=600&q=80",
+            image: "/images/crafts/mysore_inlay.jpg",
             artisan: "Narayana Swamy Master Inlayer",
             description: "Embeds fine cuts of colored natural wood veneers into solid timber panels."
         },
@@ -23,7 +23,7 @@ export default function HomePage() {
             town: "Madhubani",
             state: "Bihar (East)",
             craft: "Madhubani Painting",
-            image: "https://images.unsplash.com/photo-1579783900882-c0d3dad7b119?auto=format&fit=crop&w=600&q=80",
+            image: "/images/crafts/madhubani.jpg",
             artisan: "Sunita Devi (Mithila Mahila Sangh)",
             description: "Traditional folk paintings made with natural plant dyes depicting the sacred Tree of Life."
         },
@@ -31,7 +31,7 @@ export default function HomePage() {
             town: "Bhuj",
             state: "Gujarat (West)",
             craft: "Kutch Mirror Work",
-            image: "https://images.unsplash.com/photo-1584917865442-de89df76afd3?auto=format&fit=crop&w=600&q=80",
+            image: "/images/crafts/kutch_mirrorwork.jpg",
             artisan: "Deviben Rabari Collective",
             description: "Vibrant threadwork embedded with tiny mirrors, popular in apparel and decor."
         }
